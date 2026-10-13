@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 
 from database import SessionLocal
 from models import Exchange, Assignment
@@ -13,7 +13,7 @@ async def process_due_draws():
     db = SessionLocal()
 
     try:
-        now = datetime.now()
+        now = datetime.now(timezone.utc)
 
         due_exchanges = (
             db.query(Exchange)

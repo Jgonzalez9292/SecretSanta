@@ -317,7 +317,7 @@ def get_exchange(
         )
     registration_closed = (
             exchange.registration_deadline is not None
-            and datetime.now() > exchange.registration_deadline
+            and datetime.now(timezone.utc) > exchange.registration_deadline
     )
 
     return {

@@ -43,6 +43,38 @@ if (!exchangeId || !token) {
         "dashboard.html";
 }
 
+function toLocalDateTimeInput(isoDate) {
+
+    if (!isoDate) {
+        return "";
+    }
+
+    const date = new Date(isoDate);
+
+    const offset =
+        date.getTimezoneOffset() * 60000;
+
+    const localDate =
+        new Date(date.getTime() - offset);
+
+    return localDate
+        .toISOString()
+        .slice(0, 16);
+}
+
+function formatDateTime(isoDate) {
+    if (!isoDate) {
+        return "Not set";
+    }
+
+    return new Date(isoDate).toLocaleString([], {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+    });
+}
 
 async function loadExchange() {
 
@@ -76,10 +108,10 @@ async function loadExchange() {
         `Budget: $${exchange.budget ?? "Not set"}`;
 
     document.getElementById("registration-deadline").textContent =
-        `Registration deadline: ${exchange.registration_deadline ?? "Not set"}`;
+        `Registration deadline: ${formatDateTime(exchange.registration_deadline)}`;
 
     document.getElementById("draw-date").textContent =
-        `Draw date: ${exchange.draw_date ?? "Not set"}`;
+        `Draw date: ${formatDateTime(exchange.draw_date)}`;
 
     const drawStatus =
     document.getElementById("draw-status");
@@ -143,14 +175,14 @@ async function loadExchange() {
         exchange.budget ?? "";
 
     editRegistrationDeadline.value =
-        exchange.registration_deadline
-            ? exchange.registration_deadline.slice(0, 16)
-            : "";
+        toLocalDateTimeInput(
+            exchange.registration_deadline
+        );
 
     editDrawDate.value =
-        exchange.draw_date
-            ? exchange.draw_date.slice(0, 16)
-            : "";
+        toLocalDateTimeInput(
+            exchange.draw_date
+        );
 
 
     const participantList =
@@ -213,11 +245,20 @@ editForm.addEventListener("submit", async (event) => {
                 : null,
 
         registration_deadline:
-            editRegistrationDeadline.value || null,
+            editRegistrationDeadline.value
+                ? new Date(
+                    editRegistrationDeadline.value
+                ).toISOString()
+                : null,
 
         draw_date:
-            editDrawDate.value || null
+            editDrawDate.value
+                ? new Date(
+                    editDrawDate.value
+                ).toISOString()
+                : null
     };
+    console.log(updates);
 
 
     const response = await fetch(

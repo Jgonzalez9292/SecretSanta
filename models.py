@@ -41,12 +41,12 @@ class Exchange(Base):
     )
 
     registration_deadline = Column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=True
     )
 
     draw_date = Column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=True
     )
 
@@ -57,7 +57,7 @@ class Exchange(Base):
     )
 
     created_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         server_default=func.now()
     )
 
@@ -187,7 +187,7 @@ class Assignment(Base):
     )
 
     email_sent_at = Column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=True
     )
 

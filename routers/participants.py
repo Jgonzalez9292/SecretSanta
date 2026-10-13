@@ -5,7 +5,7 @@ from database import get_db
 from models import Exchange, Participant, User
 from schemas import ParticipantCreate, ParticipantResponse
 from auth import get_current_user
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 router = APIRouter(
@@ -37,7 +37,7 @@ def join_exchange(
 
     if (
             exchange.registration_deadline is not None
-            and datetime.now() > exchange.registration_deadline
+            and datetime.now(timezone.utc) > exchange.registration_deadline
     ):
         raise HTTPException(
             status_code=403,

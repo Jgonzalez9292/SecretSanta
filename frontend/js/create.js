@@ -41,15 +41,20 @@ form.addEventListener("submit", async (event) => {
     const exchange = {
         name: name,
         code: code,
+
         budget: budgetValue
             ? Number(budgetValue)
             : null,
 
         registration_deadline:
-            registrationDeadline || null,
+            registrationDeadline
+                ? new Date(registrationDeadline).toISOString()
+                : null,
 
         draw_date:
-            drawDate || null
+            drawDate
+                ? new Date(drawDate).toISOString()
+                : null
     };
 
 

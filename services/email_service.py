@@ -157,10 +157,7 @@ async def send_exchange_assignment_emails(
             interests=receiver.interests
         )
 
-        assignment.email_sent_at = (
-            datetime.now(timezone.utc)
-            .replace(tzinfo=None)
-        )
+        assignment.email_sent_at = datetime.now(timezone.utc)
 
         assignment.email_id = result["id"]
 
