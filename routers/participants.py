@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Exchange, Participant
+from models import Exchange, Participant, User
 from schemas import ParticipantCreate, ParticipantResponse
+from auth import get_current_user
 
 
 router = APIRouter(
@@ -46,3 +47,33 @@ def join_exchange(
     db.refresh(new_participant)
 
     return new_participant
+
+@router.delete("/{participant_id}")
+def delete_participant(
+    participant_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    participant = (
+        db.query(Participant)
+        .join(Exchange)
+        .filter(
+            Participant.id == participant_id,
+            Exchange.created_by == current_user.id
+        )
+        .first()
+    )
+
+    if participant is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Participant not found."
+        )
+
+    db.delete(participant)
+    db.commit()
+
+    return {
+        "status": "success",
+        "message": "Participant removed."
+    }

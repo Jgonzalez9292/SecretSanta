@@ -153,3 +153,35 @@ class User(Base):
         back_populates="organizer",
         cascade="all, delete-orphan"
     )
+
+class Assignment(Base):
+    __tablename__ = "assignments"
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    exchange_id = Column(
+        Integer,
+        ForeignKey("exchanges.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    giver_id = Column(
+        Integer,
+        ForeignKey("participants.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    receiver_id = Column(
+        Integer,
+        ForeignKey("participants.id", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime,
+        server_default=func.now()
+    )

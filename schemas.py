@@ -73,3 +73,9 @@ class ExchangeListItem(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ExchangeUpdate(BaseModel):
+    name: str | None = None
+    budget: Decimal | None = None
+    registration_deadline: datetime | None = None
+    draw_date: datetime | None = None
