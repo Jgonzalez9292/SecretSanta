@@ -79,7 +79,7 @@ function formatDateTime(isoDate) {
 async function loadExchange() {
 
     const response = await fetch(
-        `http://127.0.0.1:8000/api/exchanges/manage/${exchangeId}`,
+        `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`,
         {
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -262,7 +262,7 @@ editForm.addEventListener("submit", async (event) => {
 
 
     const response = await fetch(
-        `http://127.0.0.1:8000/api/exchanges/manage/${exchangeId}`,
+        `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`,
         {
             method: "PUT",
 
@@ -313,7 +313,7 @@ document
         }
 
         const response = await fetch(
-            `http://127.0.0.1:8000/api/participants/${participantId}`,
+            `${API_BASE_URL}/api/participants/${participantId}`,
             {
                 method: "DELETE",
                 headers: {
@@ -347,7 +347,7 @@ document
         }
 
         const response = await fetch(
-            `http://127.0.0.1:8000/api/exchanges/manage/${exchangeId}/draw`,
+            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/draw`,
             {
                 method: "POST",
                 headers: {
@@ -383,7 +383,7 @@ document
         }
 
         const response = await fetch(
-            `http://127.0.0.1:8000/api/exchanges/manage/${exchangeId}`,
+            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`,
             {
                 method: "DELETE",
                 headers: {
@@ -417,7 +417,7 @@ document
         }
 
         const response = await fetch(
-            `http://127.0.0.1:8000/api/exchanges/manage/${exchangeId}/send-emails`,
+            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/send-emails`,
             {
                 method: "POST",
                 headers: {

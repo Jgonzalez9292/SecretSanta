@@ -19,7 +19,7 @@ if (!token) {
 async function loadDashboard() {
 
     const userResponse = await fetch(
-        "http://127.0.0.1:8000/api/users/me",
+        `${API_BASE_URL}/api/users/me`,
         {
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -40,7 +40,7 @@ async function loadDashboard() {
 
 
     const exchangeResponse = await fetch(
-        "http://127.0.0.1:8000/api/exchanges/mine",
+        `${API_BASE_URL}/api/exchanges/mine`,
         {
             headers: {
                 "Authorization": `Bearer ${token}`

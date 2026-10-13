@@ -27,7 +27,7 @@ form.addEventListener("submit", async (event) => {
 
     try {
         const response = await fetch(
-            "http://127.0.0.1:8000/api/users/signup",
+            `${API_BASE_URL}/api/users/signup`,
             {
                 method: "POST",
                 headers: {
@@ -55,7 +55,7 @@ form.addEventListener("submit", async (event) => {
 
 
         const loginResponse = await fetch(
-            "http://127.0.0.1:8000/api/users/login",
+            `${API_BASE_URL}/api/users/login`,
             {
                 method: "POST",
                 headers: {

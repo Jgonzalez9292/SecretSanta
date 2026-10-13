@@ -60,7 +60,7 @@ form.addEventListener("submit", async (event) => {
 
     try {
         const response = await fetch(
-            "http://127.0.0.1:8000/api/exchanges/",
+            `${API_BASE_URL}/api/exchanges/`,
             {
                 method: "POST",
                 headers: {

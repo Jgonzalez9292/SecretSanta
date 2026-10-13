@@ -9,7 +9,7 @@ joinForm.addEventListener("submit", async (event) => {
 
     try {
         const response = await fetch(
-            `http://127.0.0.1:8000/api/exchanges/${code}`
+            `${API_BASE_URL}/api/exchanges/${code}`
         );
 
         if (!response.ok) {

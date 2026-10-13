@@ -36,7 +36,7 @@ form.addEventListener("submit", async (event) => {
     };
 
     const response = await fetch(
-        `http://127.0.0.1:8000/api/participants/join/${exchange.code}`,
+        `${API_BASE_URL}/api/participants/join/${exchange.code}`,
         {
             method: "POST",
             headers: {
