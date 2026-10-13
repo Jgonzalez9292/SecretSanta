@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Secret Santa</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1 id="exchange-name"></h1>
+
+        <p id="exchange-budget"></p>
+
+        <form id="participant-form">
+
+            <label for="name">Name</label>
+            <input
+                type="text"
+                id="name"
+                required
+            >
+
+            <label for="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                required
+            >
+
+            <label for="interests">Interests</label>
+            <textarea id="interests"></textarea>
+
+            <label for="wishlist">Wishlist</label>
+            <textarea id="wishlist"></textarea>
+
+            <button type="submit">
+                Join Exchange
+            </button>
+
+        </form>
+
+        <p id="message"></p>
+
+    </main>
+
+    <script src="js/join.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16
+    container_name: secret_santa_db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: santa_admin
+      POSTGRES_PASSWORD: santa_password
+      POSTGRES_DB: secret_santa
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
