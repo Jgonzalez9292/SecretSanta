@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime, timezone
 
 from database import get_db
 from auth import get_current_user
-from models import Exchange, User, Assignment
+from models import Exchange, User, Assignment, Participant
 from schemas import ExchangeCreate, ExchangeResponse, ExchangeListItem, ExchangeUpdate
-from services.secret_santa import generate_assignments
+from services.secret_santa import generate_assignments, draw_exchange
+from services.email_service import send_assignment_email, send_exchange_assignment_emails
 
 
 router = APIRouter(
@@ -82,6 +84,36 @@ def get_exchange_for_management(
             detail="Exchange not found."
         )
 
+    assignment_count = (
+        db.query(Assignment)
+        .filter(Assignment.exchange_id == exchange.id)
+        .count()
+    )
+
+    drawn = assignment_count > 0
+
+    email_count = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id,
+            Assignment.email_sent_at.is_not(None)
+        )
+        .count()
+    )
+
+    assignment_count = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id
+        )
+        .count()
+    )
+
+    emails_sent = (
+            assignment_count > 0
+            and email_count == assignment_count
+    )
+
     return {
         "id": exchange.id,
         "name": exchange.name,
@@ -89,6 +121,8 @@ def get_exchange_for_management(
         "budget": exchange.budget,
         "registration_deadline": exchange.registration_deadline,
         "draw_date": exchange.draw_date,
+        "drawn": drawn,
+        "emails_sent": emails_sent,
         "participants": [
             {
                 "id": participant.id,
@@ -159,45 +193,110 @@ def run_draw(
             detail="Exchange not found."
         )
 
-    existing_assignments = (
-        db.query(Assignment)
-        .filter(
-            Assignment.exchange_id == exchange_id
+    try:
+        assignments_created = draw_exchange(
+            db,
+            exchange
         )
-        .count()
-    )
 
-    if existing_assignments > 0:
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )
+
+    if assignments_created == 0:
         raise HTTPException(
             status_code=409,
             detail="This exchange has already been drawn."
         )
 
-    participants = exchange.participants
+    return {
+        "status": "success",
+        "message": "Secret Santa draw completed.",
+        "assignments_created": assignments_created
+    }
 
-    if len(participants) < 2:
+@router.delete("/manage/{exchange_id}")
+def delete_exchange(
+    exchange_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    exchange = (
+        db.query(Exchange)
+        .filter(
+            Exchange.id == exchange_id,
+            Exchange.created_by == current_user.id
+        )
+        .first()
+    )
+
+    if exchange is None:
         raise HTTPException(
-            status_code=400,
-            detail="At least two participants are required."
+            status_code=404,
+            detail="Exchange not found."
         )
 
-    matches = generate_assignments(participants)
-
-    for giver, receiver in matches:
-        assignment = Assignment(
-            exchange_id=exchange.id,
-            giver_id=giver.id,
-            receiver_id=receiver.id
-        )
-
-        db.add(assignment)
-
+    db.delete(exchange)
     db.commit()
 
     return {
         "status": "success",
-        "message": "Secret Santa draw completed.",
-        "assignments_created": len(matches)
+        "message": "Exchange deleted."
+    }
+
+@router.post("/manage/{exchange_id}/send-emails")
+async def send_assignment_emails(
+    exchange_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    exchange = (
+        db.query(Exchange)
+        .filter(
+            Exchange.id == exchange_id,
+            Exchange.created_by == current_user.id
+        )
+        .first()
+    )
+
+    if exchange is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Exchange not found."
+        )
+
+    assignment_count = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id
+        )
+        .count()
+    )
+
+    if assignment_count == 0:
+        raise HTTPException(
+            status_code=400,
+            detail="This exchange has not been drawn yet."
+        )
+
+    emails_sent = await send_exchange_assignment_emails(
+        db,
+        exchange
+    )
+
+    if emails_sent == 0:
+        return {
+            "status": "success",
+            "message": "All assignment emails have already been sent.",
+            "emails_sent": 0
+        }
+
+    return {
+        "status": "success",
+        "message": "Assignment emails sent.",
+        "emails_sent": emails_sent
     }
 
 @router.get("/{exchange_code}")
@@ -216,12 +315,18 @@ def get_exchange(
             status_code=404,
             detail="Exchange not found."
         )
+    registration_closed = (
+            exchange.registration_deadline is not None
+            and datetime.now() > exchange.registration_deadline
+    )
 
     return {
         "id": exchange.id,
         "name": exchange.name,
         "code": exchange.code,
         "budget": exchange.budget,
+        "registration_deadline": exchange.registration_deadline,
+        "registration_closed": registration_closed,
         "participants": [
             {
                 "id": participant.id,

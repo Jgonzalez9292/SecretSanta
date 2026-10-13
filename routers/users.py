@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from services.email_service import send_test_email
 
 from database import get_db
 from models import User
@@ -23,6 +24,19 @@ router = APIRouter(
     prefix="/api/users",
     tags=["Users"]
 )
+
+@router.post("/test-email")
+async def test_email(
+    current_user: User = Depends(get_current_user)
+):
+    result = await send_test_email(
+        "delivered@resend.dev"
+    )
+
+    return {
+        "status": "success",
+        "email_id": result["id"]
+    }
 
 @router.post(
     "/login",

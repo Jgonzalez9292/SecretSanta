@@ -19,6 +19,13 @@ joinForm.addEventListener("submit", async (event) => {
 
         const exchange = await response.json();
 
+        if (exchange.registration_closed) {
+            message.textContent =
+                `Registration for ${exchange.name} has closed.`;
+
+            return;
+        }
+
         localStorage.setItem(
             "exchange",
             JSON.stringify(exchange)

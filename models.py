@@ -185,3 +185,13 @@ class Assignment(Base):
         DateTime,
         server_default=func.now()
     )
+
+    email_sent_at = Column(
+        DateTime,
+        nullable=True
+    )
+
+    email_id = Column(
+        String(255),
+        nullable=True
+    )

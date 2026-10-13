@@ -5,6 +5,7 @@ from database import get_db
 from models import Exchange, Participant, User
 from schemas import ParticipantCreate, ParticipantResponse
 from auth import get_current_user
+from datetime import datetime
 
 
 router = APIRouter(
@@ -32,6 +33,15 @@ def join_exchange(
         raise HTTPException(
             status_code=404,
             detail="Exchange not found."
+        )
+
+    if (
+            exchange.registration_deadline is not None
+            and datetime.now() > exchange.registration_deadline
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Registration for this exchange has closed."
         )
 
     new_participant = Participant(

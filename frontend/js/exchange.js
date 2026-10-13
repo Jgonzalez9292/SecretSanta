@@ -31,6 +31,12 @@ const message =
 const drawButton =
     document.getElementById("draw-button");
 
+const deleteExchangeButton =
+    document.getElementById("delete-exchange-button");
+
+const sendEmailsButton =
+    document.getElementById("send-emails-button");
+
 
 if (!exchangeId || !token) {
     window.location.href =
@@ -49,14 +55,12 @@ async function loadExchange() {
         }
     );
 
-
     if (!response.ok) {
         message.textContent =
             "Could not load exchange.";
 
         return;
     }
-
 
     const exchange =
         await response.json();
@@ -77,6 +81,60 @@ async function loadExchange() {
     document.getElementById("draw-date").textContent =
         `Draw date: ${exchange.draw_date ?? "Not set"}`;
 
+    const drawStatus =
+    document.getElementById("draw-status");
+
+    if (exchange.drawn) {
+
+        drawStatus.textContent =
+            "Draw status: Completed";
+
+        drawButton.disabled = true;
+
+        drawButton.textContent =
+            "Draw Completed";
+
+    } else {
+
+        drawStatus.textContent =
+            "Draw status: Not yet drawn";
+
+        drawButton.disabled = false;
+
+        drawButton.textContent =
+            "Run Secret Santa Draw";
+    }
+
+    const emailStatus =
+        document.getElementById("email-status");
+
+    if (!exchange.drawn) {
+
+        emailStatus.textContent =
+            "Email status: Waiting for draw";
+
+        sendEmailsButton.disabled = true;
+
+    } else if (exchange.emails_sent) {
+
+        emailStatus.textContent =
+            "Email status: Sent";
+
+        sendEmailsButton.disabled = true;
+
+        sendEmailsButton.textContent =
+            "Assignment Emails Sent";
+
+    } else {
+
+        emailStatus.textContent =
+            "Email status: Not sent";
+
+        sendEmailsButton.disabled = false;
+
+        sendEmailsButton.textContent =
+            "Send Assignment Emails";
+    }
 
     editName.value =
         exchange.name ?? "";
@@ -269,6 +327,78 @@ document
 
         message.textContent =
             `Draw complete. ${data.assignments_created} assignments created.`;
+
+        await loadExchange();
+    });
+
+    deleteExchangeButton.addEventListener("click", async () => {
+
+        const confirmed = confirm(
+            "Delete this exchange? This will permanently remove the exchange, its participants, and its Secret Santa assignments."
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/exchanges/manage/${exchangeId}`,
+            {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+            message.textContent =
+                data.detail || "Could not delete exchange.";
+
+            return;
+        }
+
+        window.location.href =
+            "dashboard.html";
+    });
+
+    sendEmailsButton.addEventListener("click", async () => {
+
+        const confirmed = confirm(
+            "Send Secret Santa assignment emails to everyone in this exchange?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/exchanges/manage/${exchangeId}/send-emails`,
+            {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+            message.textContent =
+                data.detail || "Could not send assignment emails.";
+
+            return;
+        }
+
+        message.textContent =
+            data.message;
+
+        await loadExchange();
     });
 
 loadExchange();
