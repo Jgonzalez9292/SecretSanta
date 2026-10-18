@@ -172,6 +172,61 @@ def update_exchange(
 
     updates = changes.model_dump(exclude_unset=True)
 
+    now = datetime.now(timezone.utc)
+
+    new_registration_deadline = updates.get(
+        "registration_deadline",
+        exchange.registration_deadline
+    )
+
+    new_draw_date = updates.get(
+        "draw_date",
+        exchange.draw_date
+    )
+
+    registration_changed = (
+            "registration_deadline" in updates
+            and new_registration_deadline
+            != exchange.registration_deadline
+    )
+
+    draw_changed = (
+            "draw_date" in updates
+            and new_draw_date
+            != exchange.draw_date
+    )
+
+    if (
+            registration_changed
+            and new_registration_deadline is not None
+            and new_registration_deadline <= now
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Registration deadline must be in the future."
+        )
+
+    if (
+            draw_changed
+            and new_draw_date is not None
+            and new_draw_date <= now
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Draw date must be in the future."
+        )
+
+    if (
+            (registration_changed or draw_changed)
+            and new_registration_deadline is not None
+            and new_draw_date is not None
+            and new_registration_deadline >= new_draw_date
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Registration deadline must be before the draw date."
+        )
+
     for field, value in updates.items():
         setattr(exchange, field, value)
 

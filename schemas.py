@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from datetime import datetime
 from decimal import Decimal
 
@@ -9,6 +9,38 @@ class ExchangeCreate(BaseModel):
     budget: Decimal | None = None
     registration_deadline: datetime | None = None
     draw_date: datetime | None = None
+
+    @model_validator(mode="after")
+    def validate_dates(self):
+
+        now = datetime.now().astimezone()
+
+        if (
+            self.registration_deadline is not None
+            and self.registration_deadline <= now
+        ):
+            raise ValueError(
+                "Registration deadline must be in the future."
+            )
+
+        if (
+            self.draw_date is not None
+            and self.draw_date <= now
+        ):
+            raise ValueError(
+                "Draw date must be in the future."
+            )
+
+        if (
+            self.registration_deadline is not None
+            and self.draw_date is not None
+            and self.registration_deadline >= self.draw_date
+        ):
+            raise ValueError(
+                "Registration deadline must be before the draw date."
+            )
+
+        return self
 
 
 class ExchangeResponse(BaseModel):

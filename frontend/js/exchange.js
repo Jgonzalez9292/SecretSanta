@@ -314,8 +314,13 @@ editForm.addEventListener("submit", async (event) => {
 
     if (!response.ok) {
 
+        const error =
+            await response.json();
+
         message.textContent =
-            "Could not update exchange.";
+            typeof error.detail === "string"
+                ? error.detail
+                : "Could not update exchange.";
 
         return;
     }
