@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from database import get_db
 from models import Exchange, Participant, User, Assignment
@@ -57,17 +58,48 @@ def join_exchange(
             detail="Registration for this exchange has closed."
         )
 
+    normalized_email = (
+        participant.email
+        .strip()
+        .lower()
+    )
+
+    existing_participant = (
+        db.query(Participant)
+        .filter(
+            Participant.exchange_id == exchange.id,
+            Participant.email == normalized_email
+        )
+        .first()
+    )
+
+    if existing_participant is not None:
+        raise HTTPException(
+            status_code=409,
+            detail="This email has already joined this exchange."
+        )
+
     new_participant = Participant(
         exchange_id=exchange.id,
         name=participant.name,
-        email=participant.email,
+        email=normalized_email,
         wishlist=participant.wishlist,
         interests=participant.interests
     )
 
     db.add(new_participant)
-    db.commit()
-    db.refresh(new_participant)
+
+    try:
+        db.commit()
+        db.refresh(new_participant)
+
+    except IntegrityError:
+        db.rollback()
+
+        raise HTTPException(
+            status_code=409,
+            detail="This email has already joined this exchange."
+        )
 
     return new_participant
 

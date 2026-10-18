@@ -5,7 +5,8 @@ from sqlalchemy import (
     Numeric,
     DateTime,
     ForeignKey,
-    Text
+    Text,
+    UniqueConstraint
 )
 
 from sqlalchemy.orm import relationship
@@ -74,6 +75,14 @@ class Exchange(Base):
 
 class Participant(Base):
     __tablename__ = "participants"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "exchange_id",
+            "email",
+            name="uq_participant_exchange_email"
+        ),
+    )
 
     id = Column(
         Integer,
