@@ -137,6 +137,13 @@ async function loadExchange() {
             "Run Secret Santa Draw";
     }
 
+    if (exchange.drawn) {
+        editButton.hidden = true;
+        editForm.hidden = true;
+    } else {
+        editButton.hidden = false;
+    }
+
     const emailStatus =
         document.getElementById("email-status");
 

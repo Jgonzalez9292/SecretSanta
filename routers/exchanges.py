@@ -155,6 +155,21 @@ def update_exchange(
             detail="Exchange not found."
         )
 
+    exchange_has_been_drawn = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id
+        )
+        .first()
+        is not None
+    )
+
+    if exchange_has_been_drawn:
+        raise HTTPException(
+            status_code=409,
+            detail="Exchange settings cannot be changed after the draw."
+        )
+
     updates = changes.model_dump(exclude_unset=True)
 
     for field, value in updates.items():
