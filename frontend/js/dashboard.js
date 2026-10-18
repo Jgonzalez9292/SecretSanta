@@ -72,11 +72,26 @@ async function loadDashboard() {
         const card =
             document.createElement("div");
 
+        card.className =
+            "exchange-card";
+
+
         const title =
             document.createElement("h3");
 
-        title.textContent =
+        const titleLink =
+            document.createElement("a");
+
+        titleLink.href =
+            `exchange.html?id=${exchange.id}`;
+
+        titleLink.className =
+            "exchange-title-link";
+
+        titleLink.textContent =
             exchange.name;
+
+        title.appendChild(titleLink);
 
 
         const code =

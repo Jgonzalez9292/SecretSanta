@@ -20,6 +20,19 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+.exchange-card {
+    cursor: pointer;
+}
+
+.exchange-title-link {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.exchange-title-link:hover {
+    text-decoration-thickness: 2px;
+}
+
 h1 {
     margin-top: 0;
 }

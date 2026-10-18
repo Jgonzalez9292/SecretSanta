@@ -356,11 +356,4 @@ def get_exchange(
         "budget": exchange.budget,
         "registration_deadline": exchange.registration_deadline,
         "registration_closed": registration_closed,
-        "participants": [
-            {
-                "id": participant.id,
-                "name": participant.name
-            }
-            for participant in exchange.participants
-        ]
     }
