@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Exchange, Participant, User
+from models import Exchange, Participant, User, Assignment
 from schemas import ParticipantCreate, ParticipantResponse
 from auth import get_current_user
 from datetime import datetime, timezone
@@ -44,6 +44,19 @@ def join_exchange(
             detail="Registration for this exchange has closed."
         )
 
+    exchange_has_been_drawn = (
+        db.query(Assignment)
+        .filter(Assignment.exchange_id == exchange.id)
+        .first()
+        is not None
+    )
+
+    if exchange_has_been_drawn:
+        raise HTTPException(
+            status_code=403,
+            detail="Registration for this exchange has closed."
+        )
+
     new_participant = Participant(
         exchange_id=exchange.id,
         name=participant.name,
@@ -78,6 +91,21 @@ def delete_participant(
         raise HTTPException(
             status_code=404,
             detail="Participant not found."
+        )
+
+    exchange_has_been_drawn = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == participant.exchange_id
+        )
+        .first()
+        is not None
+    )
+
+    if exchange_has_been_drawn:
+        raise HTTPException(
+            status_code=409,
+            detail="Participants cannot be removed after the draw."
         )
 
     db.delete(participant)

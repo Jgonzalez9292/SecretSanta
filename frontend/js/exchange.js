@@ -211,12 +211,19 @@ async function loadExchange() {
                 ${participant.email}
             </p>
 
-            <button
-                class="remove-participant"
-                data-participant-id="${participant.id}"
-            >
-                Remove
-            </button>
+            ${
+                !exchange.drawn
+                    ? `
+                        <button
+                            type="button"
+                            class="remove-participant"
+                            data-participant-id="${participant.id}"
+                        >
+                            Remove
+                        </button>
+                    `
+                    : ""
+            }
         `;
 
         participantList.appendChild(item);
@@ -258,7 +265,6 @@ editForm.addEventListener("submit", async (event) => {
                 ).toISOString()
                 : null
     };
-    console.log(updates);
 
 
     const response = await fetch(

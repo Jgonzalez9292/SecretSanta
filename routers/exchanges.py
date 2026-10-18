@@ -315,9 +315,21 @@ def get_exchange(
             status_code=404,
             detail="Exchange not found."
         )
+    exchange_has_been_drawn = (
+            db.query(Assignment)
+            .filter(
+                Assignment.exchange_id == exchange.id
+            )
+            .first()
+            is not None
+    )
+
     registration_closed = (
-            exchange.registration_deadline is not None
-            and datetime.now(timezone.utc) > exchange.registration_deadline
+            exchange_has_been_drawn
+            or (
+                    exchange.registration_deadline is not None
+                    and datetime.now(timezone.utc) > exchange.registration_deadline
+            )
     )
 
     return {
