@@ -212,26 +212,49 @@ async function loadExchange() {
         const item =
             document.createElement("div");
 
-        item.innerHTML = `
-            <p>
-                <strong>${participant.name}</strong><br>
-                ${participant.email}
-            </p>
+        const info =
+            document.createElement("p");
 
-            ${
-                !exchange.drawn
-                    ? `
-                        <button
-                            type="button"
-                            class="remove-participant"
-                            data-participant-id="${participant.id}"
-                        >
-                            Remove
-                        </button>
-                    `
-                    : ""
-            }
-        `;
+        const name =
+            document.createElement("strong");
+
+        name.textContent =
+            participant.name;
+
+        const lineBreak =
+            document.createElement("br");
+
+        const email =
+            document.createTextNode(
+                participant.email
+            );
+
+        info.appendChild(name);
+        info.appendChild(lineBreak);
+        info.appendChild(email);
+
+        item.appendChild(info);
+
+
+        if (!exchange.drawn) {
+
+            const removeButton =
+                document.createElement("button");
+
+            removeButton.type =
+                "button";
+
+            removeButton.className =
+                "remove-participant";
+
+            removeButton.dataset.participantId =
+                participant.id;
+
+            removeButton.textContent =
+                "Remove";
+
+            item.appendChild(removeButton);
+        }
 
         participantList.appendChild(item);
     });

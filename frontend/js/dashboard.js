@@ -72,26 +72,44 @@ async function loadDashboard() {
         const card =
             document.createElement("div");
 
-        card.innerHTML = `
-            <h3>${exchange.name}</h3>
+        const title =
+            document.createElement("h3");
 
-            <p>
-                Code: ${exchange.code}
-            </p>
+        title.textContent =
+            exchange.name;
 
-            <p>
-                Budget:
-                $${exchange.budget ?? "Not set"}
-            </p>
 
-            <button type="button" class="share-button">
-                Share
-            </button>
-        `;
+        const code =
+            document.createElement("p");
+
+        code.textContent =
+            `Code: ${exchange.code}`;
+
+
+        const budget =
+            document.createElement("p");
+
+        budget.textContent =
+            `Budget: $${exchange.budget ?? "Not set"}`;
 
 
         const shareButton =
-            card.querySelector(".share-button");
+            document.createElement("button");
+
+        shareButton.type =
+            "button";
+
+        shareButton.className =
+            "share-button";
+
+        shareButton.textContent =
+            "Share";
+
+
+        card.appendChild(title);
+        card.appendChild(code);
+        card.appendChild(budget);
+        card.appendChild(shareButton);
 
 
         shareButton.addEventListener(
