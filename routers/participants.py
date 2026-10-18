@@ -7,6 +7,9 @@ from models import Exchange, Participant, User, Assignment
 from schemas import ParticipantCreate, ParticipantResponse
 from auth import get_current_user
 from datetime import datetime, timezone
+from services.email_service import (
+    send_registration_confirmation_email
+)
 
 
 router = APIRouter(
@@ -19,7 +22,7 @@ router = APIRouter(
     "/join/{exchange_code}",
     response_model=ParticipantResponse
 )
-def join_exchange(
+async def join_exchange(
     exchange_code: str,
     participant: ParticipantCreate,
     db: Session = Depends(get_db)
@@ -101,6 +104,22 @@ def join_exchange(
         raise HTTPException(
             status_code=409,
             detail="This email has already joined this exchange."
+        )
+
+    try:
+        await send_registration_confirmation_email(
+            participant_email=new_participant.email,
+            participant_name=new_participant.name,
+            exchange_name=exchange.name,
+            budget=exchange.budget,
+            registration_deadline=exchange.registration_deadline,
+            draw_date=exchange.draw_date
+        )
+
+    except Exception as error:
+        print(
+            f"Could not send registration confirmation "
+            f"to {new_participant.email}: {error}"
         )
 
     return new_participant
