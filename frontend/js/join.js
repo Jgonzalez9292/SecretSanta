@@ -47,7 +47,12 @@ form.addEventListener("submit", async (event) => {
     );
 
     if (!response.ok) {
+
+        const error =
+            await response.json();
+
         message.textContent =
+            error.detail ||
             "Could not join exchange.";
 
         return;
