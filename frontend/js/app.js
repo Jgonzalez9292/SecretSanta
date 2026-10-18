@@ -1,6 +1,22 @@
 const joinForm = document.getElementById("join-form");
 const message = document.getElementById("message");
 
+const exchangeCodeInput =
+    document.getElementById("exchange-code");
+
+
+const params =
+    new URLSearchParams(window.location.search);
+
+const sharedCode =
+    params.get("code");
+
+
+if (sharedCode) {
+    exchangeCodeInput.value =
+        sharedCode;
+}
+
 joinForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 

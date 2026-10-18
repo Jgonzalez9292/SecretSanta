@@ -83,15 +83,88 @@ async function loadDashboard() {
                 Budget:
                 $${exchange.budget ?? "Not set"}
             </p>
+
+            <button type="button" class="share-button">
+                Share
+            </button>
         `;
 
-        card.addEventListener("click", () => {
-            window.location.href =
-                `exchange.html?id=${exchange.id}`;
-        });
+
+        const shareButton =
+            card.querySelector(".share-button");
+
+
+        shareButton.addEventListener(
+            "click",
+            async (event) => {
+
+                // Prevent the card click from opening
+                // the management page
+                event.stopPropagation();
+
+
+                const inviteUrl =
+                    new URL("./", window.location.href);
+
+                inviteUrl.searchParams.set(
+                    "code",
+                    exchange.code
+                );
+
+
+                const shareData = {
+                    title: `${exchange.name} Secret Santa`,
+                    url: inviteUrl.toString()
+                };
+
+
+                try {
+
+                    if (navigator.share) {
+
+                        await navigator.share(
+                            shareData
+                        );
+
+                    } else {
+
+                        await navigator.clipboard.writeText(
+                            inviteUrl.toString()
+                        );
+
+                        shareButton.textContent =
+                            "Link copied!";
+
+                        setTimeout(() => {
+                            shareButton.textContent =
+                                "Share";
+                        }, 2000);
+                    }
+
+                } catch (error) {
+
+                    // Ignore it if the user simply
+                    // closes the share menu
+                    if (error.name !== "AbortError") {
+                        console.error(error);
+                    }
+                }
+            }
+        );
+
+
+        card.addEventListener(
+            "click",
+            () => {
+                window.location.href =
+                    `exchange.html?id=${exchange.id}`;
+            }
+        );
+
 
         exchangeList.appendChild(card);
     });
+
 }
 
 
