@@ -26,7 +26,9 @@ def join_exchange(
 ):
     exchange = (
         db.query(Exchange)
-        .filter(Exchange.code == exchange_code)
+        .filter(
+            Exchange.code == exchange_code.strip().upper()
+        )
         .first()
     )
 

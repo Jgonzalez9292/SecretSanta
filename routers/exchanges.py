@@ -24,7 +24,7 @@ def create_exchange(
 ):
     new_exchange = Exchange(
         name=exchange.name,
-        code=exchange.code,
+        code=exchange.code.strip().upper(),
         budget=exchange.budget,
         registration_deadline=exchange.registration_deadline,
         draw_date=exchange.draw_date,
@@ -321,7 +321,9 @@ def get_exchange(
 ):
     exchange = (
         db.query(Exchange)
-        .filter(Exchange.code == exchange_code)
+        .filter(
+            Exchange.code == exchange_code.strip().upper()
+        )
         .first()
     )
 
