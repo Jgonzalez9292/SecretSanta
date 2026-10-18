@@ -72,6 +72,10 @@ class ParticipantResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class ExclusionCreate(BaseModel):
+    participant_a_id: int
+    participant_b_id: int
+
 class UserCreate(BaseModel):
     name: str
     email: str

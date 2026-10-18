@@ -37,6 +37,24 @@ const deleteExchangeButton =
 const sendEmailsButton =
     document.getElementById("send-emails-button");
 
+const exclusionsSection =
+    document.getElementById("exclusions-section");
+
+const exclusionControls =
+    document.getElementById("exclusion-controls");
+
+const exclusionParticipantA =
+    document.getElementById("exclusion-participant-a");
+
+const exclusionParticipantB =
+    document.getElementById("exclusion-participant-b");
+
+const addExclusionButton =
+    document.getElementById("add-exclusion-button");
+
+const exclusionList =
+    document.getElementById("exclusion-list");
+
 
 if (!exchangeId || !token) {
     window.location.href =
@@ -195,7 +213,7 @@ async function loadExchange() {
     const participantList =
         document.getElementById("participant-list");
 
-    participantList.innerHTML = "";
+    participantList.replaceChildren();
 
 
     if (exchange.participants.length === 0) {
@@ -203,62 +221,323 @@ async function loadExchange() {
         participantList.textContent =
             "No participants have joined yet.";
 
-        return;
+    } else {
+
+        exchange.participants.forEach(participant => {
+
+            const item =
+                document.createElement("div");
+
+            const info =
+                document.createElement("p");
+
+            const name =
+                document.createElement("strong");
+
+            name.textContent =
+                participant.name;
+
+            const lineBreak =
+                document.createElement("br");
+
+            const email =
+                document.createTextNode(
+                    participant.email
+                );
+
+            info.appendChild(name);
+            info.appendChild(lineBreak);
+            info.appendChild(email);
+
+            item.appendChild(info);
+
+
+            if (!exchange.drawn) {
+
+                const removeButton =
+                    document.createElement("button");
+
+                removeButton.type =
+                    "button";
+
+                removeButton.className =
+                    "remove-participant";
+
+                removeButton.dataset.participantId =
+                    participant.id;
+
+                removeButton.textContent =
+                    "Remove";
+
+                item.appendChild(removeButton);
+            }
+
+
+            participantList.appendChild(item);
+        });
     }
+
+
+    /*
+    Populate exclusion dropdowns
+    */
+
+    exclusionParticipantA.replaceChildren();
+    exclusionParticipantB.replaceChildren();
+
+
+    const placeholderA =
+        document.createElement("option");
+
+    placeholderA.value = "";
+    placeholderA.textContent =
+        "Select participant";
+
+    exclusionParticipantA.appendChild(
+        placeholderA
+    );
+
+
+    const placeholderB =
+        document.createElement("option");
+
+    placeholderB.value = "";
+    placeholderB.textContent =
+        "Select participant";
+
+    exclusionParticipantB.appendChild(
+        placeholderB
+    );
 
 
     exchange.participants.forEach(participant => {
 
-        const item =
-            document.createElement("div");
+        const optionA =
+            document.createElement("option");
 
-        const info =
-            document.createElement("p");
+        optionA.value =
+            participant.id;
 
-        const name =
-            document.createElement("strong");
-
-        name.textContent =
+        optionA.textContent =
             participant.name;
 
-        const lineBreak =
-            document.createElement("br");
 
-        const email =
-            document.createTextNode(
-                participant.email
+        const optionB =
+            document.createElement("option");
+
+        optionB.value =
+            participant.id;
+
+        optionB.textContent =
+            participant.name;
+
+
+        exclusionParticipantA.appendChild(
+            optionA
+        );
+
+        exclusionParticipantB.appendChild(
+            optionB
+        );
+    });
+
+
+    /*
+    Existing exclusions
+    */
+
+    exclusionList.replaceChildren();
+
+    const exclusions =
+        exchange.exclusions ?? [];
+
+
+    if (exclusions.length === 0) {
+
+        const noExclusions =
+            document.createElement("p");
+
+        noExclusions.textContent =
+            "No match exclusions have been added.";
+
+        exclusionList.appendChild(
+            noExclusions
+        );
+
+    } else {
+
+        exclusions.forEach(exclusion => {
+
+            const item =
+                document.createElement("div");
+
+            const description =
+                document.createElement("span");
+
+            description.textContent =
+                `${exclusion.participant_a_name} ↔ ${exclusion.participant_b_name}`;
+
+            item.appendChild(description);
+
+
+            if (!exchange.drawn) {
+
+                const removeButton =
+                    document.createElement("button");
+
+                removeButton.type =
+                    "button";
+
+                removeButton.className =
+                    "remove-exclusion";
+
+                removeButton.dataset.exclusionId =
+                    exclusion.id;
+
+                removeButton.textContent =
+                    "Remove";
+
+                item.appendChild(removeButton);
+            }
+
+
+            exclusionList.appendChild(item);
+        });
+    }
+
+
+    /*
+    Exclusions cannot be changed after draw
+    */
+
+    exclusionControls.hidden =
+        exchange.drawn;
+}
+
+addExclusionButton.addEventListener(
+    "click",
+    async () => {
+
+        const participantAId =
+            Number(
+                exclusionParticipantA.value
             );
 
-        info.appendChild(name);
-        info.appendChild(lineBreak);
-        info.appendChild(email);
+        const participantBId =
+            Number(
+                exclusionParticipantB.value
+            );
 
-        item.appendChild(info);
 
+        if (!participantAId || !participantBId) {
 
-        if (!exchange.drawn) {
+            message.textContent =
+                "Select two participants.";
 
-            const removeButton =
-                document.createElement("button");
-
-            removeButton.type =
-                "button";
-
-            removeButton.className =
-                "remove-participant";
-
-            removeButton.dataset.participantId =
-                participant.id;
-
-            removeButton.textContent =
-                "Remove";
-
-            item.appendChild(removeButton);
+            return;
         }
 
-        participantList.appendChild(item);
-    });
-}
+
+        if (participantAId === participantBId) {
+
+            message.textContent =
+                "Choose two different participants.";
+
+            return;
+        }
+
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/exclusions`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+
+                body: JSON.stringify({
+                    participant_a_id:
+                        participantAId,
+
+                    participant_b_id:
+                        participantBId
+                })
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            message.textContent =
+                data.detail ||
+                "Could not add exclusion.";
+
+            return;
+        }
+
+
+        message.textContent =
+            "Match exclusion added.";
+
+        await loadExchange();
+    }
+);
+
+exclusionList.addEventListener(
+    "click",
+    async (event) => {
+
+        if (
+            !event.target.classList.contains(
+                "remove-exclusion"
+            )
+        ) {
+            return;
+        }
+
+
+        const exclusionId =
+            event.target.dataset.exclusionId;
+
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/exclusions/${exclusionId}`,
+            {
+                method: "DELETE",
+
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            message.textContent =
+                data.detail ||
+                "Could not remove exclusion.";
+
+            return;
+        }
+
+
+        message.textContent =
+            "Match exclusion removed.";
+
+        await loadExchange();
+    }
+);
 
 
 editButton.addEventListener("click", () => {

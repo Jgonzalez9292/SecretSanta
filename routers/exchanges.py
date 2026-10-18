@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 
 from database import get_db
 from auth import get_current_user
-from models import Exchange, User, Assignment, Participant
-from schemas import ExchangeCreate, ExchangeResponse, ExchangeListItem, ExchangeUpdate
+from models import Exchange, User, Assignment, Participant, ParticipantExclusion
+from schemas import ExchangeCreate, ExchangeResponse, ExchangeListItem, ExchangeUpdate, ExclusionCreate
 from services.secret_santa import generate_assignments, draw_exchange
 from services.email_service import send_assignment_email, send_exchange_assignment_emails
 
@@ -114,6 +114,19 @@ def get_exchange_for_management(
             and email_count == assignment_count
     )
 
+    exclusions = (
+        db.query(ParticipantExclusion)
+        .filter(
+            ParticipantExclusion.exchange_id == exchange.id
+        )
+        .all()
+    )
+
+    participant_names = {
+        participant.id: participant.name
+        for participant in exchange.participants
+    }
+
     return {
         "id": exchange.id,
         "name": exchange.name,
@@ -130,6 +143,17 @@ def get_exchange_for_management(
                 "email": participant.email
             }
             for participant in exchange.participants
+        ],
+        "exclusions": [
+            {
+                "id": exclusion.id,
+                "participant_a_id": exclusion.participant_a_id,
+                "participant_a_name": participant_names.get(exclusion.participant_a_id),
+                "participant_b_id": exclusion.participant_b_id,
+                "participant_b_name":
+                    participant_names.get(exclusion.participant_b_id)
+            }
+            for exclusion in exclusions
         ]
     }
 
@@ -367,6 +391,189 @@ async def send_assignment_emails(
         "status": "success",
         "message": "Assignment emails sent.",
         "emails_sent": emails_sent
+    }
+
+@router.post("/manage/{exchange_id}/exclusions")
+def add_exclusion(
+    exchange_id: int,
+    exclusion: ExclusionCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    exchange = (
+        db.query(Exchange)
+        .filter(
+            Exchange.id == exchange_id,
+            Exchange.created_by == current_user.id
+        )
+        .first()
+    )
+
+    if exchange is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Exchange not found."
+        )
+
+
+    exchange_has_been_drawn = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id
+        )
+        .first()
+        is not None
+    )
+
+    if exchange_has_been_drawn:
+        raise HTTPException(
+            status_code=409,
+            detail="Exclusions cannot be changed after the draw."
+        )
+
+
+    if exclusion.participant_a_id == exclusion.participant_b_id:
+        raise HTTPException(
+            status_code=400,
+            detail="A participant cannot be excluded from themselves."
+        )
+
+
+    participants = (
+        db.query(Participant)
+        .filter(
+            Participant.exchange_id == exchange.id,
+            Participant.id.in_([
+                exclusion.participant_a_id,
+                exclusion.participant_b_id
+            ])
+        )
+        .all()
+    )
+
+    if len(participants) != 2:
+        raise HTTPException(
+            status_code=400,
+            detail="Both participants must belong to this exchange."
+        )
+
+
+    participant_a_id = min(
+        exclusion.participant_a_id,
+        exclusion.participant_b_id
+    )
+
+    participant_b_id = max(
+        exclusion.participant_a_id,
+        exclusion.participant_b_id
+    )
+
+
+    existing_exclusion = (
+        db.query(ParticipantExclusion)
+        .filter(
+            ParticipantExclusion.exchange_id == exchange.id,
+            ParticipantExclusion.participant_a_id == participant_a_id,
+            ParticipantExclusion.participant_b_id == participant_b_id
+        )
+        .first()
+    )
+
+    if existing_exclusion is not None:
+        raise HTTPException(
+            status_code=409,
+            detail="This exclusion already exists."
+        )
+
+
+    new_exclusion = ParticipantExclusion(
+        exchange_id=exchange.id,
+        participant_a_id=participant_a_id,
+        participant_b_id=participant_b_id
+    )
+
+    db.add(new_exclusion)
+
+    try:
+        db.commit()
+        db.refresh(new_exclusion)
+
+    except IntegrityError:
+        db.rollback()
+
+        raise HTTPException(
+            status_code=409,
+            detail="This exclusion already exists."
+        )
+
+
+    return {
+        "id": new_exclusion.id,
+        "exchange_id": new_exclusion.exchange_id,
+        "participant_a_id": new_exclusion.participant_a_id,
+        "participant_b_id": new_exclusion.participant_b_id
+    }
+
+@router.delete(
+    "/manage/{exchange_id}/exclusions/{exclusion_id}"
+)
+def delete_exclusion(
+    exchange_id: int,
+    exclusion_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    exchange = (
+        db.query(Exchange)
+        .filter(
+            Exchange.id == exchange_id,
+            Exchange.created_by == current_user.id
+        )
+        .first()
+    )
+
+    if exchange is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Exchange not found."
+        )
+
+    exchange_has_been_drawn = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id
+        )
+        .first()
+        is not None
+    )
+
+    if exchange_has_been_drawn:
+        raise HTTPException(
+            status_code=409,
+            detail="Exclusions cannot be changed after the draw."
+        )
+
+    exclusion = (
+        db.query(ParticipantExclusion)
+        .filter(
+            ParticipantExclusion.id == exclusion_id,
+            ParticipantExclusion.exchange_id == exchange.id
+        )
+        .first()
+    )
+
+    if exclusion is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Exclusion not found."
+        )
+
+    db.delete(exclusion)
+    db.commit()
+
+    return {
+        "status": "success",
+        "message": "Exclusion removed."
     }
 
 @router.get("/{exchange_code}")

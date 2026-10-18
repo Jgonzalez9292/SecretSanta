@@ -6,7 +6,8 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Text,
-    UniqueConstraint
+    UniqueConstraint,
+    CheckConstraint
 )
 
 from sqlalchemy.orm import relationship
@@ -124,6 +125,60 @@ class Participant(Base):
     exchange = relationship(
         "Exchange",
         back_populates="participants"
+    )
+
+class ParticipantExclusion(Base):
+    __tablename__ = "participant_exclusions"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "exchange_id",
+            "participant_a_id",
+            "participant_b_id",
+            name="uq_participant_exclusion"
+        ),
+        CheckConstraint(
+            "participant_a_id < participant_b_id",
+            name="ck_exclusion_participant_order"
+        ),
+    )
+
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
+
+    exchange_id = Column(
+        Integer,
+        ForeignKey(
+            "exchanges.id",
+            ondelete="CASCADE"
+        ),
+        nullable=False
+    )
+
+    participant_a_id = Column(
+        Integer,
+        ForeignKey(
+            "participants.id",
+            ondelete="CASCADE"
+        ),
+        nullable=False
+    )
+
+    participant_b_id = Column(
+        Integer,
+        ForeignKey(
+            "participants.id",
+            ondelete="CASCADE"
+        ),
+        nullable=False
+    )
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
     )
 
 class User(Base):
