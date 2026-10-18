@@ -73,21 +73,32 @@ form.addEventListener("submit", async (event) => {
 
         if (!response.ok) {
 
-            const error = await response.json();
+            const error =
+                await response.json();
 
             console.error(error);
 
-            message.textContent =
-                "Could not create exchange.";
+            if (typeof error.detail === "string") {
 
-            return;
-        }
+                message.textContent =
+                    error.detail;
 
-        if (!response.ok) {
-            const error = await response.json();
+            } else if (
+                Array.isArray(error.detail)
+                && error.detail.length > 0
+            ) {
 
-            message.textContent =
-                error.detail || "Could not create exchange.";
+                message.textContent =
+                    error.detail[0].msg.replace(
+                        "Value error, ",
+                        ""
+                    );
+
+            } else {
+
+                message.textContent =
+                    "Could not create exchange.";
+            }
 
             return;
         }
