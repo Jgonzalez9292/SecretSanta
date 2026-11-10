@@ -109,3 +109,476 @@ a:hover {
     margin-top: 15px;
     font-weight: bold;
 }
+
+/* =========================
+   JOIN PAGE
+   ========================= */
+
+.join-page {
+    --christmas-green: #173d32;
+    --christmas-green-dark: #0f2c25;
+    --christmas-green-soft: #285447;
+
+    --christmas-red: #a63d46;
+    --christmas-red-dark: #87323a;
+
+    --christmas-gold: #c8a96b;
+
+    --holiday-cream: #f7f3ea;
+    --holiday-card: rgba(255, 255, 255, 0.96);
+
+    --holiday-text: #202521;
+    --holiday-muted: #6d746f;
+    --holiday-border: #dddcd4;
+
+    min-height: 100vh;
+    margin: 0;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--christmas-green-dark),
+            var(--christmas-green)
+        );
+
+    color: var(--holiday-text);
+}
+
+
+.join-background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+
+.join-glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    filter: blur(20px);
+}
+
+
+.join-glow-one {
+    top: -170px;
+    right: -100px;
+}
+
+
+.join-glow-two {
+    bottom: -220px;
+    left: -120px;
+
+    background:
+        rgba(200, 169, 107, 0.12);
+}
+
+
+.join-shell {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 48px 20px;
+}
+
+
+.join-card {
+    width: min(100%, 640px);
+
+    background:
+        var(--holiday-card);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.45);
+
+    border-radius: 24px;
+
+    padding: 40px;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.24);
+
+    backdrop-filter: blur(14px);
+}
+
+
+.join-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 36px;
+
+    color:
+        var(--christmas-green);
+
+    font-size: 0.95rem;
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+}
+
+
+.join-brand-mark {
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        var(--christmas-green);
+
+    border-radius: 10px;
+
+    font-size: 1rem;
+}
+
+
+.join-intro {
+    margin-bottom: 24px;
+}
+
+
+.join-eyebrow {
+    margin: 0 0 8px;
+
+    color:
+        var(--christmas-red);
+
+    font-size: 0.78rem;
+    font-weight: 800;
+
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+
+.join-page #exchange-name {
+    margin:
+        0 0 12px;
+
+    color:
+        var(--christmas-green-dark);
+
+    font-size:
+        clamp(2rem, 6vw, 3rem);
+
+    line-height: 1.05;
+}
+
+
+.join-subtitle {
+    max-width: 520px;
+
+    margin: 0;
+
+    color:
+        var(--holiday-muted);
+
+    font-size: 1rem;
+    line-height: 1.65;
+}
+
+
+.join-page #exchange-budget {
+    margin:
+        0 0 28px;
+
+    padding:
+        14px 16px;
+
+    background:
+        var(--holiday-cream);
+
+    border:
+        1px solid #e6dfd0;
+
+    border-radius:
+        12px;
+
+    color:
+        var(--christmas-green-dark);
+
+    font-weight: 700;
+}
+
+
+.join-page #participant-form {
+    display: grid;
+    gap: 20px;
+}
+
+
+.join-page label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color:
+        #313832;
+
+    font-size:
+        0.9rem;
+
+    font-weight:
+        700;
+}
+
+
+.join-page input,
+.join-page textarea,
+.join-page select {
+    width: 100%;
+
+    padding:
+        13px 14px;
+
+    border:
+        1px solid var(--holiday-border);
+
+    border-radius:
+        11px;
+
+    background:
+        #ffffff;
+
+    color:
+        var(--holiday-text);
+
+    font: inherit;
+
+    outline: none;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+
+.join-page textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+
+.join-page input:focus,
+.join-page textarea:focus,
+.join-page select:focus {
+    border-color:
+        var(--christmas-green-soft);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(40, 84, 71, 0.11);
+}
+
+
+.join-page button {
+    border: 0;
+
+    border-radius:
+        11px;
+
+    padding:
+        13px 18px;
+
+    font: inherit;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.12s ease,
+        background 0.12s ease,
+        opacity 0.12s ease;
+}
+
+
+.join-page button:hover:not(:disabled) {
+    transform:
+        translateY(-1px);
+}
+
+
+.join-page button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+
+.join-page #participant-form button[type="submit"] {
+    margin-top: 4px;
+
+    background:
+        var(--christmas-green);
+
+    color:
+        white;
+}
+
+
+.join-page #participant-form button[type="submit"]:hover {
+    background:
+        var(--christmas-green-dark);
+}
+
+
+.join-page #pending-registration {
+    padding:
+        26px;
+
+    background:
+        var(--holiday-cream);
+
+    border:
+        1px solid #e3dccd;
+
+    border-radius:
+        16px;
+}
+
+
+.join-page #pending-registration h2 {
+    margin:
+        0 0 10px;
+
+    color:
+        var(--christmas-green-dark);
+}
+
+
+.join-page #pending-email {
+    color:
+        var(--christmas-green);
+
+    font-size:
+        1.05rem;
+}
+
+
+.join-page #resend-confirmation-button {
+    background:
+        var(--christmas-green);
+
+    color:
+        white;
+}
+
+
+.join-page #change-email-button {
+    background:
+        transparent;
+
+    color:
+        var(--christmas-green);
+
+    border:
+        1px solid var(--christmas-green);
+
+    margin-left:
+        8px;
+}
+
+
+.join-page #change-email-form {
+    margin-top:
+        22px;
+
+    padding-top:
+        22px;
+
+    border-top:
+        1px solid #ded8ca;
+}
+
+
+.join-page #change-email-form button[type="submit"] {
+    background:
+        var(--christmas-red);
+
+    color:
+        white;
+}
+
+
+.join-page #cancel-email-change-button {
+    background:
+        transparent;
+
+    color:
+        var(--holiday-muted);
+}
+
+
+.join-page #message {
+    min-height:
+        22px;
+
+    margin:
+        18px 0 0;
+
+    color:
+        var(--christmas-red-dark);
+
+    font-size:
+        0.92rem;
+
+    line-height:
+        1.5;
+}
+
+
+@media (max-width: 600px) {
+
+    .join-shell {
+        align-items:
+            flex-start;
+
+        padding:
+            20px 12px;
+    }
+
+    .join-card {
+        padding:
+            28px 22px;
+
+        border-radius:
+            18px;
+    }
+
+    .join-brand {
+        margin-bottom:
+            28px;
+    }
+
+    .join-page #change-email-button {
+        margin:
+            10px 0 0;
+
+        width:
+            100%;
+    }
+
+    .join-page #resend-confirmation-button {
+        width:
+            100%;
+    }
+}
