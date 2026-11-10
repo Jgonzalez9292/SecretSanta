@@ -115,3 +115,13 @@ class ExchangeUpdate(BaseModel):
     budget: Decimal | None = None
     registration_deadline: datetime | None = None
     draw_date: datetime | None = None
+
+class ParticipantJoinResponse(ParticipantResponse):
+    management_token: str
+
+class ParticipantManagementRequest(BaseModel):
+    management_token: str
+
+class ParticipantEmailUpdate(BaseModel):
+    management_token: str
+    email: str
