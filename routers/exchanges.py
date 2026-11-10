@@ -140,7 +140,9 @@ def get_exchange_for_management(
             {
                 "id": participant.id,
                 "name": participant.name,
-                "email": participant.email
+                "email": participant.email,
+                "email_verified_at":
+                    participant.email_verified_at
             }
             for participant in exchange.participants
         ],

@@ -137,7 +137,10 @@ async function loadDashboard() {
 
 
                 const inviteUrl =
-                    new URL("./", window.location.href);
+                    new URL(
+                        "join.html",
+                        window.location.href
+                    );
 
                 inviteUrl.searchParams.set(
                     "code",

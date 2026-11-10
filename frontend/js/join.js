@@ -1,5 +1,9 @@
-const exchange =
-    JSON.parse(localStorage.getItem("exchange"));
+const params =
+    new URLSearchParams(window.location.search);
+
+const sharedCode =
+    params.get("code");
+
 
 const exchangeName =
     document.getElementById("exchange-name");
@@ -14,52 +18,180 @@ const message =
     document.getElementById("message");
 
 
-if (!exchange) {
-    window.location.href = "index.html";
-}
+let exchange = null;
 
 
-exchangeName.textContent = exchange.name;
+async function loadExchange() {
 
-exchangeBudget.textContent =
-    `Budget: $${exchange.budget}`;
+    let code = sharedCode;
 
 
-form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+    /*
+    Keep the old homepage flow working too.
+    */
 
-    const participant = {
-        name: document.getElementById("name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        interests: document.getElementById("interests").value.trim(),
-        wishlist: document.getElementById("wishlist").value.trim()
-    };
+    if (!code) {
 
-    const response = await fetch(
-        `${API_BASE_URL}/api/participants/join/${exchange.code}`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(participant)
+        const storedExchange =
+            localStorage.getItem("exchange");
+
+        if (storedExchange) {
+
+            const parsedExchange =
+                JSON.parse(storedExchange);
+
+            code =
+                parsedExchange.code;
         }
-    );
+    }
 
-    if (!response.ok) {
 
-        const error =
-            await response.json();
+    if (!code) {
 
-        message.textContent =
-            error.detail ||
-            "Could not join exchange.";
+        window.location.href =
+            "index.html";
 
         return;
     }
 
-    message.textContent =
-        "You're in! Your Secret Santa assignment will be emailed later.";
 
-    form.reset();
-});
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/exchanges/${encodeURIComponent(code)}`
+        );
+
+
+        if (!response.ok) {
+
+            exchangeName.textContent =
+                "Exchange not found";
+
+            form.hidden =
+                true;
+
+            return;
+        }
+
+
+        exchange =
+            await response.json();
+
+
+        exchangeName.textContent =
+            exchange.name;
+
+
+        exchangeBudget.textContent =
+            exchange.budget !== null
+                ? `Budget: $${exchange.budget}`
+                : "No budget specified";
+
+
+        if (exchange.registration_closed) {
+
+            message.textContent =
+                "Registration for this exchange has closed.";
+
+            form.hidden =
+                true;
+
+            return;
+        }
+
+
+        form.hidden =
+            false;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "Could not connect to the server.";
+
+        form.hidden =
+            true;
+    }
+}
+
+
+form.addEventListener(
+    "submit",
+    async (event) => {
+
+        event.preventDefault();
+
+
+        if (!exchange) {
+            return;
+        }
+
+
+        const participant = {
+            name:
+                document
+                    .getElementById("name")
+                    .value
+                    .trim(),
+
+            email:
+                document
+                    .getElementById("email")
+                    .value
+                    .trim(),
+
+            interests:
+                document
+                    .getElementById("interests")
+                    .value
+                    .trim(),
+
+            wishlist:
+                document
+                    .getElementById("wishlist")
+                    .value
+                    .trim()
+        };
+
+
+        const response = await fetch(
+            `${API_BASE_URL}/api/participants/join/${encodeURIComponent(exchange.code)}`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(participant)
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            message.textContent =
+                data.detail ||
+                "Could not join exchange.";
+
+            return;
+        }
+
+
+        message.textContent =
+            "Registration submitted. Check your email for confirmation.";
+
+        form.reset();
+    }
+);
+
+
+loadExchange();

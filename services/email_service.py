@@ -5,6 +5,7 @@ import resend
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
+from urllib.parse import quote
 
 from models import Assignment, Participant
 
@@ -34,6 +35,11 @@ APP_TIMEZONE = ZoneInfo(
         "America/New_York"
     )
 )
+
+APP_BASE_URL = os.getenv(
+    "APP_BASE_URL",
+    "https://secretsanta.page"
+).rstrip("/")
 
 def format_event_time(value):
 
@@ -76,7 +82,8 @@ async def send_registration_confirmation_email(
     exchange_name: str,
     budget,
     registration_deadline,
-    draw_date
+    draw_date,
+    verification_token: str
 ):
 
     recipient = (
@@ -107,8 +114,18 @@ async def send_registration_confirmation_email(
         draw_date
     )
 
+    verification_url = (
+        f"{APP_BASE_URL}/verify.html"
+        f"?token={quote(verification_token)}"
+    )
+
+    safe_verification_url = escape(
+        verification_url,
+        quote=True
+    )
+
     html = f"""
-        <h1>You're registered! 🎄</h1>
+        <h1>Confirm your Secret Santa registration 🎄</h1>
 
         <p>
             Hey {safe_participant_name}!
@@ -135,15 +152,34 @@ async def send_registration_confirmation_email(
         </p>
 
         <p>
-            Once the draw takes place, we'll send
-            you another email with the person you're
-            shopping for, along with their wishlist
-            and interests.
+            Confirm your email address to complete
+            your registration.
         </p>
 
         <p>
-            Keep an eye on your inbox around the
-            draw time! 🎅
+            <a
+                href="{safe_verification_url}"
+                style="
+                    display: inline-block;
+                    padding: 12px 20px;
+                    background: #174a34;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 6px;
+                    font-weight: bold;
+                "
+            >
+                Confirm Registration
+            </a>
+        </p>
+
+        <p>
+            This confirmation link expires in 24 hours.
+        </p>
+
+        <p>
+            Once you're confirmed, we'll email your
+            Secret Santa assignment after the draw.
         </p>
     """
 

@@ -100,10 +100,11 @@ def draw_exchange(db, exchange):
     if existing_assignments > 0:
         return 0
 
-
-    participants = list(
-        exchange.participants
-    )
+    participants = [
+        participant
+        for participant in exchange.participants
+        if participant.email_verified_at is not None
+    ]
 
     if len(participants) < 2:
         raise ValueError(

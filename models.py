@@ -122,6 +122,31 @@ class Participant(Base):
         server_default=func.now()
     )
 
+    email_verified_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    verification_token_hash = Column(
+        String(255),
+        nullable=True
+    )
+
+    verification_token_expires_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    verification_sent_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    management_token_hash = Column(
+        String(255),
+        nullable=True
+    )
+
     exchange = relationship(
         "Exchange",
         back_populates="participants"

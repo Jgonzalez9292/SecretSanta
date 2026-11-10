@@ -251,6 +251,31 @@ async function loadExchange() {
 
             item.appendChild(info);
 
+            const verificationStatus =
+                document.createElement("p");
+
+
+            if (participant.email_verified_at) {
+
+                verificationStatus.textContent =
+                    "✓ Confirmed";
+
+                verificationStatus.className =
+                    "participant-confirmed";
+
+            } else {
+
+                verificationStatus.textContent =
+                    "⏳ Awaiting email confirmation";
+
+                verificationStatus.className =
+                    "participant-pending";
+            }
+
+
+            item.appendChild(
+                verificationStatus
+            );
 
             if (!exchange.drawn) {
 
