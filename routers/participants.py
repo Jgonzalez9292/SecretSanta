@@ -7,7 +7,14 @@ import secrets
 
 from database import get_db
 from models import Exchange, Participant, User, Assignment
-from schemas import ParticipantCreate, ParticipantResponse, ParticipantJoinResponse, ParticipantManagementRequest, ParticipantEmailUpdate
+from schemas import (
+    ParticipantCreate,
+    ParticipantResponse,
+    ParticipantJoinResponse,
+    ParticipantManagementRequest,
+    ParticipantEmailUpdate,
+    ParticipantVerificationRequest
+)
 from auth import get_current_user
 from datetime import datetime, timezone, timedelta
 from services.email_service import (
@@ -166,10 +173,12 @@ async def join_exchange(
 
 @router.post("/verify")
 def verify_registration(
-    token: str,
+    request: ParticipantVerificationRequest,
     db: Session = Depends(get_db)
 ):
-    token_hash = hash_token(token)
+    token_hash = hash_token(
+        request.token
+    )
 
     participant = (
         db.query(Participant)

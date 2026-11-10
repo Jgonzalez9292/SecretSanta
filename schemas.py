@@ -125,3 +125,6 @@ class ParticipantManagementRequest(BaseModel):
 class ParticipantEmailUpdate(BaseModel):
     management_token: str
     email: str
+
+class ParticipantVerificationRequest(BaseModel):
+    token: str

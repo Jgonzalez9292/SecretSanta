@@ -116,7 +116,7 @@ async def send_registration_confirmation_email(
 
     verification_url = (
         f"{APP_BASE_URL}/verify.html"
-        f"?token={quote(verification_token)}"
+        f"#token={quote(verification_token)}"
     )
 
     safe_verification_url = escape(
