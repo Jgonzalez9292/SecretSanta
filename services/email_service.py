@@ -193,9 +193,14 @@ async def send_registration_confirmation_email(
             <a
                 href="{safe_management_url}"
                 style="
+                    display: inline-block;
+                    padding: 11px 18px;
+                    background: #f7f3ea;
                     color: #174a34;
-                    font-weight: bold;
+                    border: 1px solid #174a34;
                     text-decoration: none;
+                    border-radius: 6px;
+                    font-weight: bold;
                 "
             >
                 Manage Registration
