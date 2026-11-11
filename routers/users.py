@@ -26,7 +26,8 @@ from schemas import (
     UserLogin,
     LoginResponse,
     PasswordResetRequest,
-    PasswordResetConfirm
+    PasswordResetConfirm,
+    ChangePasswordRequest
 )
 
 from auth import (
@@ -289,6 +290,45 @@ def reset_password(
             "Your password has been reset successfully."
     }
 
+@router.post("/change-password")
+def change_password(
+    request: ChangePasswordRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if not verify_password(
+        request.current_password,
+        current_user.password_hash
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Current password is incorrect."
+        )
+
+    if len(request.new_password) < 8:
+        raise HTTPException(
+            status_code=400,
+            detail="New password must be at least 8 characters."
+        )
+
+    if verify_password(
+        request.new_password,
+        current_user.password_hash
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="New password must be different from your current password."
+        )
+
+    current_user.password_hash = hash_password(
+        request.new_password
+    )
+
+    db.commit()
+
+    return {
+        "message": "Password changed successfully."
+    }
 
 @router.get(
     "/me",
