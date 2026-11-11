@@ -117,6 +117,12 @@ def signup(
     user: UserCreate,
     db: Session = Depends(get_db)
 ):
+    if len(user.password) < 8:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at least 8 characters."
+        )
+
     new_user = User(
         name=user.name,
         email=user.email.lower(),
@@ -228,10 +234,15 @@ def reset_password(
     request: PasswordResetConfirm,
     db: Session = Depends(get_db)
 ):
-    token_hash = hash_reset_token(
-            request.token
+    if len(request.password) < 8:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at least 8 characters."
         )
 
+    token_hash = hash_reset_token(
+        request.token
+    )
 
     user = (
         db.query(User)
@@ -242,50 +253,36 @@ def reset_password(
         .first()
     )
 
-
     if user is None:
         raise HTTPException(
             status_code=400,
-            detail=
-                "This password reset link is invalid or has expired."
+            detail="This password reset link is invalid or has expired."
         )
-
 
     expires_at = user.password_reset_token_expires_at
 
-
     if (
         expires_at is None
-        or expires_at <=
-        datetime.now(
-            timezone.utc
-        )
+        or expires_at <= datetime.now(timezone.utc)
     ):
         user.password_reset_token_hash = None
-
         user.password_reset_token_expires_at = None
 
         db.commit()
 
         raise HTTPException(
             status_code=400,
-            detail=
-                "This password reset link is invalid or has expired."
+            detail="This password reset link is invalid or has expired."
         )
-
 
     user.password_hash = hash_password(
-            request.password
-        )
-
+        request.password
+    )
 
     user.password_reset_token_hash = None
-
     user.password_reset_token_expires_at = None
 
-
     db.commit()
-
 
     return {
         "message":
