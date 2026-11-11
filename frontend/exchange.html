@@ -3,128 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Manage Exchange</title>
-    <link rel="stylesheet" href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 </head>
 
-<body>
+<body class="organizer-page">
 
-    <main class="container">
+    <div class="join-background">
+        <div class="join-glow join-glow-one"></div>
+        <div class="join-glow join-glow-two"></div>
+    </div>
 
-        <h1 id="exchange-name">Manage Exchange</h1>
+    <main class="organizer-shell">
 
-        <p id="exchange-code"></p>
-        <p id="exchange-budget"></p>
-        <p id="registration-deadline"></p>
-        <p id="draw-date"></p>
-        <p id="draw-status"></p>
-        <p id="email-status"></p>
+        <section class="organizer-card">
 
-        <button id="edit-button">
-        Edit Exchange
-        </button>
+            <header class="organizer-header">
 
-        <form id="edit-form" hidden>
+                <div class="join-brand">
+                    <span class="join-brand-mark">
+                        🎁
+                    </span>
 
-            <label for="edit-name">Exchange name</label>
-            <input
-                type="text"
-                id="edit-name"
-            >
+                    <span>
+                        Secret Santa
+                    </span>
+                </div>
 
-            <label for="edit-budget">Budget</label>
-            <input
-                type="number"
-                id="edit-budget"
-                min="0"
-                step="0.01"
-            >
+                <a
+                    href="dashboard.html"
+                    class="organizer-back-link"
+                >
+                    Dashboard
+                </a>
 
-            <label for="edit-registration-deadline">
-                Registration deadline
-            </label>
-            <input
-                type="datetime-local"
-                id="edit-registration-deadline"
-            >
-
-            <label for="edit-draw-date">
-                Draw date
-            </label>
-            <input
-                type="datetime-local"
-                id="edit-draw-date"
-            >
-
-            <button type="submit">
-                Save Changes
-            </button>
-
-        </form>
-
-        <button id="draw-button">
-            Run Secret Santa Draw
-        </button>
-
-        <button id="send-emails-button" type="button">
-            Send Assignment Emails
-        </button>
-
-        <h2>Participants</h2>
-
-        <div id="participant-list"></div>
+            </header>
 
 
-        <section id="exclusions-section">
+            <div class="organizer-title-row">
 
-            <h2>Match Exclusions</h2>
+                <div>
 
-            <p>
-                Choose two participants who should not
-                draw each other.
-            </p>
+                    <p class="join-eyebrow">
+                        Manage Exchange
+                    </p>
 
-            <div id="exclusion-controls">
+                    <h1 id="exchange-name">
+                        Manage Exchange
+                    </h1>
 
-                <select id="exclusion-participant-a">
-                    <option value="">
-                        Select participant
-                    </option>
-                </select>
+                    <p
+                        id="exchange-code"
+                        class="organizer-code"
+                    ></p>
 
-                <span>↔</span>
-
-                <select id="exclusion-participant-b">
-                    <option value="">
-                        Select participant
-                    </option>
-                </select>
+                </div>
 
                 <button
-                    id="add-exclusion-button"
+                    id="edit-button"
+                    class="secondary-button"
                     type="button"
                 >
-                    Add Exclusion
+                    Edit Exchange
                 </button>
 
             </div>
 
-            <div id="exclusion-list"></div>
+
+            <div class="organizer-details-grid">
+
+                <div class="organizer-detail-card">
+                    <span class="exchange-detail-label">
+                        Gift Limit
+                    </span>
+
+                    <strong id="exchange-budget"></strong>
+                </div>
+
+
+                <div class="organizer-detail-card">
+                    <span class="exchange-detail-label">
+                        Registration
+                    </span>
+
+                    <strong id="registration-deadline"></strong>
+                </div>
+
+
+                <div class="organizer-detail-card">
+                    <span class="exchange-detail-label">
+                        Drawing
+                    </span>
+
+                    <strong id="draw-date"></strong>
+                </div>
+
+
+                <div class="organizer-detail-card">
+                    <span class="exchange-detail-label">
+                        Draw Status
+                    </span>
+
+                    <strong id="draw-status"></strong>
+                </div>
+
+
+                <div class="organizer-detail-card">
+                    <span class="exchange-detail-label">
+                        Email Status
+                    </span>
+
+                    <strong id="email-status"></strong>
+                </div>
+
+            </div>
+
+
+            <form
+                id="edit-form"
+                class="organizer-edit-form"
+                hidden
+            >
+
+                <div class="organizer-section-heading">
+                    <h2>Edit Exchange</h2>
+
+                    <p>
+                        Update your exchange details before the draw.
+                    </p>
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="edit-name">
+                        Exchange name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="edit-name"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="edit-budget">
+                        Budget
+                    </label>
+
+                    <input
+                        type="number"
+                        id="edit-budget"
+                        min="0"
+                        step="0.01"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="edit-registration-deadline">
+                        Registration deadline
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="edit-registration-deadline"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="edit-draw-date">
+                        Draw date
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="edit-draw-date"
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Save Changes
+                </button>
+
+            </form>
+
+
+            <section class="organizer-section">
+
+                <div class="organizer-section-heading">
+
+                    <h2>Participants</h2>
+
+                    <p>
+                        Confirmed and pending participants appear here.
+                    </p>
+
+                </div>
+
+                <div id="participant-list"></div>
+
+            </section>
+
+
+            <section
+                id="exclusions-section"
+                class="organizer-section"
+            >
+
+                <div class="organizer-section-heading">
+
+                    <h2>Match Exclusions</h2>
+
+                    <p>
+                        Choose two participants who should not draw each other.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="exclusion-controls"
+                    class="exclusion-controls"
+                >
+
+                    <select id="exclusion-participant-a">
+
+                        <option value="">
+                            Select participant
+                        </option>
+
+                    </select>
+
+
+                    <span class="exclusion-arrow">
+                        ↔
+                    </span>
+
+
+                    <select id="exclusion-participant-b">
+
+                        <option value="">
+                            Select participant
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        id="add-exclusion-button"
+                        type="button"
+                        class="secondary-button"
+                    >
+                        Add Exclusion
+                    </button>
+
+                </div>
+
+
+                <div id="exclusion-list"></div>
+
+            </section>
+
+
+            <section class="organizer-section">
+
+                <div class="organizer-section-heading">
+
+                    <h2>Exchange Actions</h2>
+
+                    <p>
+                        Run the draw and send Secret Santa assignments.
+                    </p>
+
+                </div>
+
+
+                <div class="organizer-action-row">
+
+                    <button
+                        id="draw-button"
+                        class="primary-button"
+                    >
+                        Run Secret Santa Draw
+                    </button>
+
+
+                    <button
+                        id="send-emails-button"
+                        type="button"
+                        class="secondary-button"
+                    >
+                        Send Assignment Emails
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <p id="message"></p>
+
+
+            <section class="danger-zone">
+
+                <div>
+
+                    <h2>
+                        Delete Exchange
+                    </h2>
+
+                    <p>
+                        Permanently removes this exchange,
+                        its participants, exclusions, and assignments.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="delete-exchange-button"
+                    type="button"
+                    class="danger-button"
+                >
+                    Delete Exchange
+                </button>
+
+            </section>
 
         </section>
 
-
-        <p id="message"></p>
-
-        <button id="delete-exchange-button" type="button">
-            Delete Exchange
-        </button>
-
-        <a href="dashboard.html">
-            Back to Dashboard
-        </a>
-
     </main>
+
 
     <script src="js/config.js?v=2"></script>
     <script src="js/exchange.js?v=2"></script>

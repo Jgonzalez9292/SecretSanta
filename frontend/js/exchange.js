@@ -123,13 +123,19 @@ async function loadExchange() {
         `Code: ${exchange.code}`;
 
     document.getElementById("exchange-budget").textContent =
-        `Budget: $${exchange.budget ?? "Not set"}`;
+        exchange.budget !== null
+            ? `$${Number(exchange.budget).toFixed(0)}`
+            : "Not set";
 
     document.getElementById("registration-deadline").textContent =
-        `Registration deadline: ${formatDateTime(exchange.registration_deadline)}`;
+        formatDateTime(
+            exchange.registration_deadline
+        );
 
     document.getElementById("draw-date").textContent =
-        `Draw date: ${formatDateTime(exchange.draw_date)}`;
+        formatDateTime(
+            exchange.draw_date
+        );
 
     const drawStatus =
     document.getElementById("draw-status");
@@ -137,7 +143,7 @@ async function loadExchange() {
     if (exchange.drawn) {
 
         drawStatus.textContent =
-            "Draw status: Completed";
+            "Completed";
 
         drawButton.disabled = true;
 
@@ -147,7 +153,7 @@ async function loadExchange() {
     } else {
 
         drawStatus.textContent =
-            "Draw status: Not yet drawn";
+            "Not yet drawn";
 
         drawButton.disabled = false;
 
@@ -168,14 +174,14 @@ async function loadExchange() {
     if (!exchange.drawn) {
 
         emailStatus.textContent =
-            "Email status: Waiting for draw";
+            "Waiting for draw";
 
         sendEmailsButton.disabled = true;
 
     } else if (exchange.emails_sent) {
 
         emailStatus.textContent =
-            "Email status: Sent";
+            "Sent";
 
         sendEmailsButton.disabled = true;
 
@@ -185,7 +191,7 @@ async function loadExchange() {
     } else {
 
         emailStatus.textContent =
-            "Email status: Not sent";
+            "Not sent";
 
         sendEmailsButton.disabled = false;
 
@@ -228,54 +234,71 @@ async function loadExchange() {
             const item =
                 document.createElement("div");
 
-            const info =
-                document.createElement("p");
+            item.className =
+                "organizer-participant-card";
+
+
+            const details =
+                document.createElement("div");
+
+            details.className =
+                "participant-details";
+
 
             const name =
                 document.createElement("strong");
 
+            name.className =
+                "participant-name";
+
             name.textContent =
                 participant.name;
 
-            const lineBreak =
-                document.createElement("br");
 
             const email =
-                document.createTextNode(
-                    participant.email
-                );
+                document.createElement("span");
 
-            info.appendChild(name);
-            info.appendChild(lineBreak);
-            info.appendChild(email);
+            email.className =
+                "participant-email";
 
-            item.appendChild(info);
+            email.textContent =
+                participant.email;
 
-            const verificationStatus =
-                document.createElement("p");
 
+            details.appendChild(name);
+            details.appendChild(email);
+
+
+            const actions =
+                document.createElement("div");
+
+            actions.className =
+                "participant-actions";
+
+
+            const status =
+                document.createElement("span");
 
             if (participant.email_verified_at) {
 
-                verificationStatus.textContent =
-                    "✓ Confirmed";
+                status.className =
+                    "participant-status participant-confirmed";
 
-                verificationStatus.className =
-                    "participant-confirmed";
+                status.textContent =
+                    "✓ Confirmed";
 
             } else {
 
-                verificationStatus.textContent =
-                    "⏳ Awaiting email confirmation";
+                status.className =
+                    "participant-status participant-pending";
 
-                verificationStatus.className =
-                    "participant-pending";
+                status.textContent =
+                    "Awaiting confirmation";
             }
 
 
-            item.appendChild(
-                verificationStatus
-            );
+            actions.appendChild(status);
+
 
             if (!exchange.drawn) {
 
@@ -294,9 +317,14 @@ async function loadExchange() {
                 removeButton.textContent =
                     "Remove";
 
-                item.appendChild(removeButton);
+                actions.appendChild(
+                    removeButton
+                );
             }
 
+
+            item.appendChild(details);
+            item.appendChild(actions);
 
             participantList.appendChild(item);
         });
@@ -335,7 +363,12 @@ async function loadExchange() {
     );
 
 
-    exchange.participants.forEach(participant => {
+    exchange.participants
+        .filter(
+            participant =>
+                participant.email_verified_at
+        )
+        .forEach(participant => {
 
         const optionA =
             document.createElement("option");

@@ -3,53 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Create Account</title>
-    <link rel="stylesheet" href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 </head>
 
-<body>
+<body class="signup-page">
 
-    <main class="container">
+    <div class="join-background">
+        <div class="join-glow join-glow-one"></div>
+        <div class="join-glow join-glow-two"></div>
+    </div>
 
-        <h1>Create Organizer Account</h1>
+    <main class="signup-shell">
 
-        <form id="signup-form">
+        <section class="signup-card">
 
-            <label for="name">Name</label>
-            <input
-                type="text"
-                id="name"
-                required
-            >
+            <div class="join-brand">
+                <span class="join-brand-mark">
+                    🎁
+                </span>
 
-            <label for="email">Email</label>
-            <input
-                type="email"
-                id="email"
-                required
-            >
+                <span>
+                    Secret Santa
+                </span>
+            </div>
 
-            <label for="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                required
-            >
 
-            <button type="submit">
-                Create Account
-            </button>
+            <div class="signup-intro">
 
-        </form>
+                <p class="join-eyebrow">
+                    Organizer Account
+                </p>
 
-        <p id="message"></p>
+                <h1>
+                    Create Your Account
+                </h1>
 
-        <p>
-            Already have an account?
-            <a href="login.html">Log in</a>
-        </p>
+                <p>
+                    Create an organizer account to start and manage
+                    your own Secret Santa exchanges.
+                </p>
+
+            </div>
+
+
+            <form id="signup-form">
+
+                <div class="form-field">
+
+                    <label for="name">
+                        Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Your name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Create a password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button signup-submit-button"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <p id="message"></p>
+
+
+            <p class="signup-login">
+
+                Already have an account?
+
+                <a href="login.html">
+                    Log in
+                </a>
+
+            </p>
+
+        </section>
 
     </main>
+
 
     <script src="js/config.js"></script>
     <script src="js/signup.js"></script>

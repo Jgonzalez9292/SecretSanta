@@ -76,6 +76,17 @@ async function loadDashboard() {
             "exchange-card";
 
 
+        const topRow =
+            document.createElement("div");
+
+        topRow.className =
+            "exchange-card-top";
+
+
+        const titleArea =
+            document.createElement("div");
+
+
         const title =
             document.createElement("h3");
 
@@ -91,21 +102,28 @@ async function loadDashboard() {
         titleLink.textContent =
             exchange.name;
 
-        title.appendChild(titleLink);
+        title.appendChild(
+            titleLink
+        );
 
 
         const code =
-            document.createElement("p");
+            document.createElement("span");
+
+        code.className =
+            "exchange-code-badge";
 
         code.textContent =
-            `Code: ${exchange.code}`;
+            exchange.code;
 
 
-        const budget =
-            document.createElement("p");
+        titleArea.appendChild(
+            title
+        );
 
-        budget.textContent =
-            `Budget: $${exchange.budget ?? "Not set"}`;
+        titleArea.appendChild(
+            code
+        );
 
 
         const shareButton =
@@ -118,21 +136,109 @@ async function loadDashboard() {
             "share-button";
 
         shareButton.textContent =
-            "Share";
+            "Share Invite";
 
 
-        card.appendChild(title);
-        card.appendChild(code);
-        card.appendChild(budget);
-        card.appendChild(shareButton);
+        topRow.appendChild(
+            titleArea
+        );
+
+        topRow.appendChild(
+            shareButton
+        );
+
+
+        const details =
+            document.createElement("div");
+
+        details.className =
+            "exchange-card-details";
+
+
+        const budget =
+            document.createElement("div");
+
+        budget.className =
+            "exchange-card-detail";
+
+
+        const budgetLabel =
+            document.createElement("span");
+
+        budgetLabel.textContent =
+            "Gift Limit";
+
+
+        const budgetValue =
+            document.createElement("strong");
+
+        budgetValue.textContent =
+            exchange.budget !== null
+                ? `$${Number(exchange.budget).toFixed(0)}`
+                : "Not set";
+
+
+        budget.appendChild(
+            budgetLabel
+        );
+
+        budget.appendChild(
+            budgetValue
+        );
+
+
+        const manage =
+            document.createElement("div");
+
+        manage.className =
+            "exchange-card-detail";
+
+
+        const manageLabel =
+            document.createElement("span");
+
+        manageLabel.textContent =
+            "Organizer";
+
+
+        const manageValue =
+            document.createElement("strong");
+
+        manageValue.textContent =
+            "Manage Exchange";
+
+
+        manage.appendChild(
+            manageLabel
+        );
+
+        manage.appendChild(
+            manageValue
+        );
+
+
+        details.appendChild(
+            budget
+        );
+
+        details.appendChild(
+            manage
+        );
+
+
+        card.appendChild(
+            topRow
+        );
+
+        card.appendChild(
+            details
+        );
 
 
         shareButton.addEventListener(
             "click",
             async (event) => {
 
-                // Prevent the card click from opening
-                // the management page
                 event.stopPropagation();
 
 
@@ -149,8 +255,11 @@ async function loadDashboard() {
 
 
                 const shareData = {
-                    title: `${exchange.name} Secret Santa`,
-                    url: inviteUrl.toString()
+                    title:
+                        `${exchange.name} Secret Santa`,
+
+                    url:
+                        inviteUrl.toString()
                 };
 
 
@@ -171,18 +280,27 @@ async function loadDashboard() {
                         shareButton.textContent =
                             "Link copied!";
 
-                        setTimeout(() => {
-                            shareButton.textContent =
-                                "Share";
-                        }, 2000);
+                        setTimeout(
+                            () => {
+
+                                shareButton.textContent =
+                                    "Share Invite";
+
+                            },
+                            2000
+                        );
                     }
 
                 } catch (error) {
 
-                    // Ignore it if the user simply
-                    // closes the share menu
-                    if (error.name !== "AbortError") {
-                        console.error(error);
+                    if (
+                        error.name !==
+                        "AbortError"
+                    ) {
+
+                        console.error(
+                            error
+                        );
                     }
                 }
             }
@@ -192,15 +310,17 @@ async function loadDashboard() {
         card.addEventListener(
             "click",
             () => {
+
                 window.location.href =
                     `exchange.html?id=${exchange.id}`;
             }
         );
 
 
-        exchangeList.appendChild(card);
+        exchangeList.appendChild(
+            card
+        );
     });
-
 }
 
 

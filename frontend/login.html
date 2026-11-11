@@ -3,46 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Secret Santa Login</title>
-    <link rel="stylesheet" href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 </head>
 
-<body>
+<body class="login-page">
 
-    <main class="container">
+    <div class="join-background">
+        <div class="join-glow join-glow-one"></div>
+        <div class="join-glow join-glow-two"></div>
+    </div>
 
-        <h1>Organizer Login</h1>
+    <main class="login-shell">
 
-        <form id="login-form">
+        <section class="login-card">
 
-            <label for="email">Email</label>
-            <input
-                type="email"
-                id="email"
-                required
-            >
+            <div class="join-brand">
+                <span class="join-brand-mark">
+                    🎁
+                </span>
 
-            <label for="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                required
-            >
+                <span>
+                    Secret Santa
+                </span>
+            </div>
 
-            <button type="submit">
-                Log In
-            </button>
 
-        </form>
+            <div class="login-intro">
 
-        <p id="message"></p>
+                <p class="join-eyebrow">
+                    Organizer Access
+                </p>
 
-        <p>
-            Don't have an account?
-            <a href="signup.html">Create one</a>
-        </p>
+                <h1>
+                    Welcome Back
+                </h1>
+
+                <p>
+                    Log in to create exchanges, manage participants,
+                    and run your Secret Santa draw.
+                </p>
+
+            </div>
+
+
+            <form id="login-form">
+
+                <div class="form-field">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Your password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button login-submit-button"
+                >
+                    Log In
+                </button>
+
+            </form>
+
+
+            <p id="message"></p>
+
+
+            <p class="login-signup">
+
+                Don't have an account?
+
+                <a href="signup.html">
+                    Create one
+                </a>
+
+            </p>
+
+        </section>
 
     </main>
+
 
     <script src="js/config.js"></script>
     <script src="js/login.js"></script>

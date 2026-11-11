@@ -3,31 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Secret Santa Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 </head>
 
-<body>
+<body class="dashboard-page">
 
-    <main class="container">
+    <div class="join-background">
+        <div class="join-glow join-glow-one"></div>
+        <div class="join-glow join-glow-two"></div>
+    </div>
 
-        <h1>Organizer Dashboard</h1>
+    <main class="dashboard-shell">
 
-        <p id="welcome"></p>
+        <section class="dashboard-card">
 
-        <a href="create.html">
-            Create New Exchange
-        </a>
+            <header class="dashboard-header">
 
-        <h2>Your Exchanges</h2>
+                <div class="join-brand">
+                    <span class="join-brand-mark">
+                        🎁
+                    </span>
 
-        <div id="exchange-list"></div>
+                    <span>
+                        Secret Santa
+                    </span>
+                </div>
 
-        <button id="logout-button">
-            Log Out
-        </button>
+
+                <button
+                    id="logout-button"
+                    class="dashboard-logout-button"
+                    type="button"
+                >
+                    Log Out
+                </button>
+
+            </header>
+
+
+            <div class="dashboard-hero">
+
+                <div>
+
+                    <p class="join-eyebrow">
+                        Organizer Dashboard
+                    </p>
+
+                    <h1>
+                        Your Secret Santa Exchanges
+                    </h1>
+
+                    <p
+                        id="welcome"
+                        class="dashboard-welcome"
+                    ></p>
+
+                </div>
+
+
+                <a
+                    href="create.html"
+                    class="create-exchange-button"
+                >
+                    Create New Exchange
+                </a>
+
+            </div>
+
+
+            <section class="dashboard-section">
+
+                <div class="organizer-section-heading">
+
+                    <h2>Your Exchanges</h2>
+
+                    <p>
+                        Manage participants, deadlines,
+                        exclusions, draws, and assignment emails.
+                    </p>
+
+                </div>
+
+
+                <div id="exchange-list"></div>
+
+            </section>
+
+        </section>
 
     </main>
+
 
     <script src="js/config.js"></script>
     <script src="js/dashboard.js"></script>
