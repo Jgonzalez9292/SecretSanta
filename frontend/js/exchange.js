@@ -56,10 +56,16 @@ const exclusionList =
     document.getElementById("exclusion-list");
 
 
-if (!exchangeId || !token) {
+if (!exchangeId) {
     window.location.href =
         "dashboard.html";
 }
+
+if (!token) {
+    window.location.href =
+        "login.html";
+}
+
 
 function toLocalDateTimeInput(isoDate) {
 
@@ -80,7 +86,9 @@ function toLocalDateTimeInput(isoDate) {
         .slice(0, 16);
 }
 
+
 function formatDateTime(isoDate) {
+
     if (!isoDate) {
         return "Not set";
     }
@@ -94,18 +102,20 @@ function formatDateTime(isoDate) {
     });
 }
 
+
 async function loadExchange() {
 
-    const response = await fetch(
-        `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`,
-        {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        }
-    );
+    const response =
+        await authenticatedFetch(
+            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`
+        );
+
+    if (!response) {
+        return;
+    }
 
     if (!response.ok) {
+
         message.textContent =
             "Could not load exchange.";
 
@@ -137,15 +147,17 @@ async function loadExchange() {
             exchange.draw_date
         );
 
+
     const drawStatus =
-    document.getElementById("draw-status");
+        document.getElementById("draw-status");
 
     if (exchange.drawn) {
 
         drawStatus.textContent =
             "Completed";
 
-        drawButton.disabled = true;
+        drawButton.disabled =
+            true;
 
         drawButton.textContent =
             "Draw Completed";
@@ -155,18 +167,28 @@ async function loadExchange() {
         drawStatus.textContent =
             "Not yet drawn";
 
-        drawButton.disabled = false;
+        drawButton.disabled =
+            false;
 
         drawButton.textContent =
             "Run Secret Santa Draw";
     }
 
+
     if (exchange.drawn) {
-        editButton.hidden = true;
-        editForm.hidden = true;
+
+        editButton.hidden =
+            true;
+
+        editForm.hidden =
+            true;
+
     } else {
-        editButton.hidden = false;
+
+        editButton.hidden =
+            false;
     }
+
 
     const emailStatus =
         document.getElementById("email-status");
@@ -176,14 +198,16 @@ async function loadExchange() {
         emailStatus.textContent =
             "Waiting for draw";
 
-        sendEmailsButton.disabled = true;
+        sendEmailsButton.disabled =
+            true;
 
     } else if (exchange.emails_sent) {
 
         emailStatus.textContent =
             "Sent";
 
-        sendEmailsButton.disabled = true;
+        sendEmailsButton.disabled =
+            true;
 
         sendEmailsButton.textContent =
             "Assignment Emails Sent";
@@ -193,11 +217,13 @@ async function loadExchange() {
         emailStatus.textContent =
             "Not sent";
 
-        sendEmailsButton.disabled = false;
+        sendEmailsButton.disabled =
+            false;
 
         sendEmailsButton.textContent =
             "Send Assignment Emails";
     }
+
 
     editName.value =
         exchange.name ?? "";
@@ -229,111 +255,111 @@ async function loadExchange() {
 
     } else {
 
-        exchange.participants.forEach(participant => {
+        exchange.participants.forEach(
+            participant => {
 
-            const item =
-                document.createElement("div");
+                const item =
+                    document.createElement("div");
 
-            item.className =
-                "organizer-participant-card";
-
-
-            const details =
-                document.createElement("div");
-
-            details.className =
-                "participant-details";
+                item.className =
+                    "organizer-participant-card";
 
 
-            const name =
-                document.createElement("strong");
+                const details =
+                    document.createElement("div");
 
-            name.className =
-                "participant-name";
-
-            name.textContent =
-                participant.name;
+                details.className =
+                    "participant-details";
 
 
-            const email =
-                document.createElement("span");
+                const name =
+                    document.createElement("strong");
 
-            email.className =
-                "participant-email";
+                name.className =
+                    "participant-name";
 
-            email.textContent =
-                participant.email;
-
-
-            details.appendChild(name);
-            details.appendChild(email);
+                name.textContent =
+                    participant.name;
 
 
-            const actions =
-                document.createElement("div");
+                const email =
+                    document.createElement("span");
 
-            actions.className =
-                "participant-actions";
+                email.className =
+                    "participant-email";
 
-
-            const status =
-                document.createElement("span");
-
-            if (participant.email_verified_at) {
-
-                status.className =
-                    "participant-status participant-confirmed";
-
-                status.textContent =
-                    "✓ Confirmed";
-
-            } else {
-
-                status.className =
-                    "participant-status participant-pending";
-
-                status.textContent =
-                    "Awaiting confirmation";
-            }
+                email.textContent =
+                    participant.email;
 
 
-            actions.appendChild(status);
+                details.appendChild(name);
+                details.appendChild(email);
 
 
-            if (!exchange.drawn) {
+                const actions =
+                    document.createElement("div");
 
-                const removeButton =
-                    document.createElement("button");
+                actions.className =
+                    "participant-actions";
 
-                removeButton.type =
-                    "button";
 
-                removeButton.className =
-                    "remove-participant";
+                const status =
+                    document.createElement("span");
 
-                removeButton.dataset.participantId =
-                    participant.id;
+                if (participant.email_verified_at) {
 
-                removeButton.textContent =
-                    "Remove";
+                    status.className =
+                        "participant-status participant-confirmed";
 
-                actions.appendChild(
-                    removeButton
+                    status.textContent =
+                        "✓ Confirmed";
+
+                } else {
+
+                    status.className =
+                        "participant-status participant-pending";
+
+                    status.textContent =
+                        "Awaiting confirmation";
+                }
+
+
+                actions.appendChild(status);
+
+
+                if (!exchange.drawn) {
+
+                    const removeButton =
+                        document.createElement("button");
+
+                    removeButton.type =
+                        "button";
+
+                    removeButton.className =
+                        "remove-participant";
+
+                    removeButton.dataset.participantId =
+                        participant.id;
+
+                    removeButton.textContent =
+                        "Remove";
+
+                    actions.appendChild(
+                        removeButton
+                    );
+                }
+
+
+                item.appendChild(details);
+                item.appendChild(actions);
+
+                participantList.appendChild(
+                    item
                 );
             }
-
-
-            item.appendChild(details);
-            item.appendChild(actions);
-
-            participantList.appendChild(item);
-        });
+        );
     }
 
-
-    /*
-    Populate exclusion dropdowns
-    */
 
     exclusionParticipantA.replaceChildren();
     exclusionParticipantB.replaceChildren();
@@ -342,7 +368,9 @@ async function loadExchange() {
     const placeholderA =
         document.createElement("option");
 
-    placeholderA.value = "";
+    placeholderA.value =
+        "";
+
     placeholderA.textContent =
         "Select participant";
 
@@ -354,7 +382,9 @@ async function loadExchange() {
     const placeholderB =
         document.createElement("option");
 
-    placeholderB.value = "";
+    placeholderB.value =
+        "";
+
     placeholderB.textContent =
         "Select participant";
 
@@ -368,41 +398,39 @@ async function loadExchange() {
             participant =>
                 participant.email_verified_at
         )
-        .forEach(participant => {
+        .forEach(
+            participant => {
 
-        const optionA =
-            document.createElement("option");
+                const optionA =
+                    document.createElement("option");
 
-        optionA.value =
-            participant.id;
+                optionA.value =
+                    participant.id;
 
-        optionA.textContent =
-            participant.name;
-
-
-        const optionB =
-            document.createElement("option");
-
-        optionB.value =
-            participant.id;
-
-        optionB.textContent =
-            participant.name;
+                optionA.textContent =
+                    participant.name;
 
 
-        exclusionParticipantA.appendChild(
-            optionA
+                const optionB =
+                    document.createElement("option");
+
+                optionB.value =
+                    participant.id;
+
+                optionB.textContent =
+                    participant.name;
+
+
+                exclusionParticipantA.appendChild(
+                    optionA
+                );
+
+                exclusionParticipantB.appendChild(
+                    optionB
+                );
+            }
         );
 
-        exclusionParticipantB.appendChild(
-            optionB
-        );
-    });
-
-
-    /*
-    Existing exclusions
-    */
 
     exclusionList.replaceChildren();
 
@@ -424,53 +452,58 @@ async function loadExchange() {
 
     } else {
 
-        exclusions.forEach(exclusion => {
+        exclusions.forEach(
+            exclusion => {
 
-            const item =
-                document.createElement("div");
+                const item =
+                    document.createElement("div");
 
-            const description =
-                document.createElement("span");
+                const description =
+                    document.createElement("span");
 
-            description.textContent =
-                `${exclusion.participant_a_name} ↔ ${exclusion.participant_b_name}`;
+                description.textContent =
+                    `${exclusion.participant_a_name} ↔ ${exclusion.participant_b_name}`;
 
-            item.appendChild(description);
+                item.appendChild(
+                    description
+                );
 
 
-            if (!exchange.drawn) {
+                if (!exchange.drawn) {
 
-                const removeButton =
-                    document.createElement("button");
+                    const removeButton =
+                        document.createElement("button");
 
-                removeButton.type =
-                    "button";
+                    removeButton.type =
+                        "button";
 
-                removeButton.className =
-                    "remove-exclusion";
+                    removeButton.className =
+                        "remove-exclusion";
 
-                removeButton.dataset.exclusionId =
-                    exclusion.id;
+                    removeButton.dataset.exclusionId =
+                        exclusion.id;
 
-                removeButton.textContent =
-                    "Remove";
+                    removeButton.textContent =
+                        "Remove";
 
-                item.appendChild(removeButton);
+                    item.appendChild(
+                        removeButton
+                    );
+                }
+
+
+                exclusionList.appendChild(
+                    item
+                );
             }
-
-
-            exclusionList.appendChild(item);
-        });
+        );
     }
 
-
-    /*
-    Exclusions cannot be changed after draw
-    */
 
     exclusionControls.hidden =
         exchange.drawn;
 }
+
 
 addExclusionButton.addEventListener(
     "click",
@@ -487,7 +520,10 @@ addExclusionButton.addEventListener(
             );
 
 
-        if (!participantAId || !participantBId) {
+        if (
+            !participantAId ||
+            !participantBId
+        ) {
 
             message.textContent =
                 "Select two participants.";
@@ -496,7 +532,10 @@ addExclusionButton.addEventListener(
         }
 
 
-        if (participantAId === participantBId) {
+        if (
+            participantAId ===
+            participantBId
+        ) {
 
             message.textContent =
                 "Choose two different participants.";
@@ -505,25 +544,31 @@ addExclusionButton.addEventListener(
         }
 
 
-        const response = await fetch(
-            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/exclusions`,
-            {
-                method: "POST",
+        const response =
+            await authenticatedFetch(
+                `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/exclusions`,
+                {
+                    method: "POST",
 
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body: JSON.stringify({
-                    participant_a_id:
-                        participantAId,
+                    body:
+                        JSON.stringify({
+                            participant_a_id:
+                                participantAId,
 
-                    participant_b_id:
-                        participantBId
-                })
-            }
-        );
+                            participant_b_id:
+                                participantBId
+                        })
+                }
+            );
+
+        if (!response) {
+            return;
+        }
 
 
         const data =
@@ -547,6 +592,7 @@ addExclusionButton.addEventListener(
     }
 );
 
+
 exclusionList.addEventListener(
     "click",
     async (event) => {
@@ -564,16 +610,17 @@ exclusionList.addEventListener(
             event.target.dataset.exclusionId;
 
 
-        const response = await fetch(
-            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/exclusions/${exclusionId}`,
-            {
-                method: "DELETE",
-
-                headers: {
-                    "Authorization": `Bearer ${token}`
+        const response =
+            await authenticatedFetch(
+                `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/exclusions/${exclusionId}`,
+                {
+                    method: "DELETE"
                 }
-            }
-        );
+            );
+
+        if (!response) {
+            return;
+        }
 
 
         const data =
@@ -598,122 +645,163 @@ exclusionList.addEventListener(
 );
 
 
-editButton.addEventListener("click", () => {
-    editForm.hidden =
-        !editForm.hidden;
-});
+editButton.addEventListener(
+    "click",
+    () => {
+
+        editForm.hidden =
+            !editForm.hidden;
+    }
+);
 
 
-editForm.addEventListener("submit", async (event) => {
+editForm.addEventListener(
+    "submit",
+    async (event) => {
 
-    event.preventDefault();
-
-
-    const updates = {
-        name:
-            editName.value.trim() || null,
-
-        budget:
-            editBudget.value
-                ? Number(editBudget.value)
-                : null,
-
-        registration_deadline:
-            editRegistrationDeadline.value
-                ? new Date(
-                    editRegistrationDeadline.value
-                ).toISOString()
-                : null,
-
-        draw_date:
-            editDrawDate.value
-                ? new Date(
-                    editDrawDate.value
-                ).toISOString()
-                : null
-    };
+        event.preventDefault();
 
 
-    const response = await fetch(
-        `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`,
-        {
-            method: "PUT",
+        const updates = {
 
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            name:
+                editName.value.trim() ||
+                null,
 
-            body: JSON.stringify(updates)
+            budget:
+                editBudget.value
+                    ? Number(
+                        editBudget.value
+                    )
+                    : null,
+
+            registration_deadline:
+                editRegistrationDeadline.value
+                    ? new Date(
+                        editRegistrationDeadline.value
+                    ).toISOString()
+                    : null,
+
+            draw_date:
+                editDrawDate.value
+                    ? new Date(
+                        editDrawDate.value
+                    ).toISOString()
+                    : null
+        };
+
+
+        const response =
+            await authenticatedFetch(
+                `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            updates
+                        )
+                }
+            );
+
+        if (!response) {
+            return;
+        }
+
+
+        if (!response.ok) {
+
+            const error =
+                await response.json();
+
+            message.textContent =
+                typeof error.detail ===
+                "string"
+                    ? error.detail
+                    : "Could not update exchange.";
+
+            return;
+        }
+
+
+        message.textContent =
+            "Exchange updated successfully.";
+
+        editForm.hidden =
+            true;
+
+        await loadExchange();
+    }
+);
+
+
+document
+    .getElementById("participant-list")
+    .addEventListener(
+        "click",
+        async (event) => {
+
+            if (
+                !event.target.classList.contains(
+                    "remove-participant"
+                )
+            ) {
+                return;
+            }
+
+
+            const participantId =
+                event.target.dataset.participantId;
+
+
+            const confirmed =
+                confirm(
+                    "Remove this participant from the exchange?"
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+
+            const response =
+                await authenticatedFetch(
+                    `${API_BASE_URL}/api/participants/${participantId}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+            if (!response) {
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                message.textContent =
+                    "Could not remove participant.";
+
+                return;
+            }
+
+
+            message.textContent =
+                "Participant removed.";
+
+            await loadExchange();
         }
     );
 
 
-    if (!response.ok) {
-
-        const error =
-            await response.json();
-
-        message.textContent =
-            typeof error.detail === "string"
-                ? error.detail
-                : "Could not update exchange.";
-
-        return;
-    }
-
-
-    message.textContent =
-        "Exchange updated successfully.";
-
-    editForm.hidden =
-        true;
-
-    await loadExchange();
-});
-
-document
-    .getElementById("participant-list")
-    .addEventListener("click", async (event) => {
-
-        if (!event.target.classList.contains("remove-participant")) {
-            return;
-        }
-
-        const participantId =
-            event.target.dataset.participantId;
-
-        const confirmed =
-            confirm("Remove this participant from the exchange?");
-
-        if (!confirmed) {
-            return;
-        }
-
-        const response = await fetch(
-            `${API_BASE_URL}/api/participants/${participantId}`,
-            {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            }
-        );
-
-        if (!response.ok) {
-            message.textContent =
-                "Could not remove participant.";
-
-            return;
-        }
-
-        message.textContent =
-            "Participant removed.";
-
-        await loadExchange();
-    });
-
-    drawButton.addEventListener("click", async () => {
+drawButton.addEventListener(
+    "click",
+    async () => {
 
         const confirmed =
             confirm(
@@ -724,100 +812,136 @@ document
             return;
         }
 
-        const response = await fetch(
-            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/draw`,
-            {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`
+
+        const response =
+            await authenticatedFetch(
+                `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/draw`,
+                {
+                    method: "POST"
                 }
-            }
-        );
+            );
+
+        if (!response) {
+            return;
+        }
+
 
         const data =
             await response.json();
 
+
         if (!response.ok) {
+
             message.textContent =
-                data.detail || "Could not run draw.";
+                data.detail ||
+                "Could not run draw.";
 
             return;
         }
+
 
         message.textContent =
             `Draw complete. ${data.assignments_created} assignments created.`;
 
         await loadExchange();
-    });
+    }
+);
 
-    deleteExchangeButton.addEventListener("click", async () => {
 
-        const confirmed = confirm(
-            "Delete this exchange? This will permanently remove the exchange, its participants, and its Secret Santa assignments."
-        );
+deleteExchangeButton.addEventListener(
+    "click",
+    async () => {
+
+        const confirmed =
+            confirm(
+                "Delete this exchange? This will permanently remove the exchange, its participants, and its Secret Santa assignments."
+            );
 
         if (!confirmed) {
             return;
         }
 
-        const response = await fetch(
-            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`,
-            {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${token}`
+
+        const response =
+            await authenticatedFetch(
+                `${API_BASE_URL}/api/exchanges/manage/${exchangeId}`,
+                {
+                    method: "DELETE"
                 }
-            }
-        );
+            );
+
+        if (!response) {
+            return;
+        }
+
 
         const data =
             await response.json();
 
+
         if (!response.ok) {
+
             message.textContent =
-                data.detail || "Could not delete exchange.";
+                data.detail ||
+                "Could not delete exchange.";
 
             return;
         }
+
 
         window.location.href =
             "dashboard.html";
-    });
+    }
+);
 
-    sendEmailsButton.addEventListener("click", async () => {
 
-        const confirmed = confirm(
-            "Send Secret Santa assignment emails to everyone in this exchange?"
-        );
+sendEmailsButton.addEventListener(
+    "click",
+    async () => {
+
+        const confirmed =
+            confirm(
+                "Send Secret Santa assignment emails to everyone in this exchange?"
+            );
 
         if (!confirmed) {
             return;
         }
 
-        const response = await fetch(
-            `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/send-emails`,
-            {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`
+
+        const response =
+            await authenticatedFetch(
+                `${API_BASE_URL}/api/exchanges/manage/${exchangeId}/send-emails`,
+                {
+                    method: "POST"
                 }
-            }
-        );
+            );
+
+        if (!response) {
+            return;
+        }
+
 
         const data =
             await response.json();
 
+
         if (!response.ok) {
+
             message.textContent =
-                data.detail || "Could not send assignment emails.";
+                data.detail ||
+                "Could not send assignment emails.";
 
             return;
         }
+
 
         message.textContent =
             data.message;
 
         await loadExchange();
-    });
+    }
+);
+
 
 loadExchange();

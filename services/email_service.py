@@ -76,6 +76,82 @@ async def send_test_email(to_email: str):
 
     return await resend.Emails.send_async(params)
 
+async def send_password_reset_email(
+    user_email: str,
+    user_name: str,
+    reset_token: str
+):
+
+    recipient = (
+        EMAIL_TEST_RECIPIENT
+        if EMAIL_TEST_MODE
+        else user_email
+    )
+
+    safe_user_name = escape(
+        user_name
+    )
+
+    reset_url = (
+        f"{APP_BASE_URL}/reset-password.html"
+        f"#token={quote(reset_token)}"
+    )
+
+    safe_reset_url = escape(
+        reset_url,
+        quote=True
+    )
+
+    html = f"""
+        <h1>Reset your Secret Santa password</h1>
+
+        <p>
+            Hey {safe_user_name},
+        </p>
+
+        <p>
+            We received a request to reset the password
+            for your Secret Santa organizer account.
+        </p>
+
+        <p>
+            <a
+                href="{safe_reset_url}"
+                style="
+                    display: inline-block;
+                    padding: 12px 20px;
+                    background: #174a34;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 6px;
+                    font-weight: bold;
+                "
+            >
+                Reset Password
+            </a>
+        </p>
+
+        <p>
+            This reset link expires in 30 minutes.
+        </p>
+
+        <p>
+            If you did not request a password reset,
+            you can ignore this email.
+        </p>
+    """
+
+    params: resend.Emails.SendParams = {
+        "from": EMAIL_FROM,
+        "to": [recipient],
+        "subject": "Reset your Secret Santa password",
+        "html": html
+    }
+
+    return await resend.Emails.send_async(
+        params
+    )
+
 async def send_registration_confirmation_email(
     participant_email: str,
     participant_name: str,

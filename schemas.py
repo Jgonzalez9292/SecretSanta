@@ -133,3 +133,10 @@ class ParticipantPreferencesUpdate(BaseModel):
     management_token: str
     interests: str | None = None
     wishlist: str | None = None
+
+class PasswordResetRequest(BaseModel):
+    email: str
+
+class PasswordResetConfirm(BaseModel):
+    token: str
+    password: str

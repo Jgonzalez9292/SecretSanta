@@ -232,6 +232,16 @@ class User(Base):
         nullable=False
     )
 
+    password_reset_token_hash = Column(
+        String(255),
+        nullable=True
+    )
+
+    password_reset_token_expires_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
     created_at = Column(
         DateTime,
         server_default=func.now()
