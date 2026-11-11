@@ -128,3 +128,8 @@ class ParticipantEmailUpdate(BaseModel):
 
 class ParticipantVerificationRequest(BaseModel):
     token: str
+
+class ParticipantPreferencesUpdate(BaseModel):
+    management_token: str
+    interests: str | None = None
+    wishlist: str | None = None

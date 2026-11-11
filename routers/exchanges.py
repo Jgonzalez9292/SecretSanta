@@ -620,4 +620,5 @@ def get_exchange(
         "budget": exchange.budget,
         "registration_deadline": exchange.registration_deadline,
         "registration_closed": registration_closed,
+        "draw_date": exchange.draw_date,
     }

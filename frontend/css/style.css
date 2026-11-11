@@ -298,32 +298,9 @@ a:hover {
 }
 
 
-.join-page #exchange-budget {
-    margin:
-        0 0 28px;
-
-    padding:
-        14px 16px;
-
-    background:
-        var(--holiday-cream);
-
-    border:
-        1px solid #e6dfd0;
-
-    border-radius:
-        12px;
-
-    color:
-        var(--christmas-green-dark);
-
-    font-weight: 700;
-}
-
-
 .join-page #participant-form {
     display: grid;
-    gap: 20px;
+    gap: 22px;
 }
 
 
@@ -545,18 +522,639 @@ a:hover {
         1.5;
 }
 
+.form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.field-help {
+    margin: -2px 0 8px;
+
+    color: var(--holiday-muted);
+
+    font-size: 0.84rem;
+    line-height: 1.45;
+}
+
+.join-page input::placeholder,
+.join-page textarea::placeholder {
+    color: #9a9f9b;
+}
+
+.exchange-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+
+    margin: 0 0 30px;
+}
+
+.exchange-detail {
+    padding: 14px 15px;
+
+    background: var(--holiday-cream);
+
+    border: 1px solid #e6dfd0;
+    border-radius: 12px;
+}
+
+.exchange-detail-label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--holiday-muted);
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.exchange-detail strong {
+    color: var(--christmas-green-dark);
+
+    font-size: 1rem;
+}
+
+.optional-label {
+    margin-left: 6px;
+    color: var(--holiday-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.join-note {
+    margin: 0;
+    padding: 12px 14px;
+
+    background: #f8f5ee;
+    border-left: 3px solid var(--christmas-gold);
+    border-radius: 8px;
+
+    color: var(--holiday-muted);
+
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.pending-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 18px;
+
+    background: var(--christmas-green);
+    border-radius: 14px;
+
+    font-size: 1.35rem;
+}
+
+.pending-copy {
+    margin: 0 0 10px;
+
+    color: var(--holiday-muted);
+
+    line-height: 1.55;
+}
+
+.pending-address {
+    margin: 0 0 18px;
+
+    color: var(--christmas-green-dark);
+
+    font-size: 1.05rem;
+}
+
+.pending-actions {
+    display: flex;
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+
+
+
+/* =========================
+   VERIFY PAGE
+   ========================= */
+
+.verify-page {
+    --christmas-green: #173d32;
+    --christmas-green-dark: #0f2c25;
+    --christmas-green-soft: #285447;
+
+    --christmas-red: #a63d46;
+    --christmas-red-dark: #87323a;
+
+    --christmas-gold: #c8a96b;
+
+    --holiday-cream: #f7f3ea;
+    --holiday-card: rgba(255, 255, 255, 0.96);
+
+    --holiday-text: #202521;
+    --holiday-muted: #6d746f;
+
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--christmas-green-dark),
+            var(--christmas-green)
+        );
+
+    color:
+        var(--holiday-text);
+}
+
+
+.verify-shell {
+    position: relative;
+    z-index: 1;
+
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px 20px;
+}
+
+
+.verify-card {
+    width: min(100%, 520px);
+
+    padding: 40px;
+
+    background:
+        var(--holiday-card);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.45);
+
+    border-radius:
+        24px;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.24);
+
+    backdrop-filter:
+        blur(14px);
+}
+
+
+.verify-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    background:
+        var(--christmas-green);
+
+    border-radius:
+        15px;
+
+    font-size:
+        1.5rem;
+}
+
+
+.verify-card h1 {
+    margin:
+        0 0 14px;
+
+    color:
+        var(--christmas-green-dark);
+
+    font-size:
+        clamp(2rem, 6vw, 2.6rem);
+
+    line-height:
+        1.08;
+}
+
+
+#verification-message {
+    margin:
+        0 0 26px;
+
+    color:
+        var(--holiday-muted);
+
+    font-size:
+        1rem;
+
+    line-height:
+        1.6;
+}
+
+
+#confirm-registration-button {
+    width: 100%;
+
+    margin: 0;
+
+    padding:
+        14px 18px;
+
+    background:
+        var(--christmas-green);
+
+    color:
+        white;
+
+    border:
+        0;
+
+    border-radius:
+        11px;
+
+    font-weight:
+        750;
+}
+
+
+#confirm-registration-button:hover:not(:disabled) {
+    background:
+        var(--christmas-green-dark);
+}
+
+
+.verify-home-link {
+    display: inline-block;
+
+    margin-top:
+        20px;
+
+    color:
+        var(--christmas-green);
+
+    font-weight:
+        700;
+
+    text-decoration:
+        none;
+}
+
+
+.verify-home-link:hover {
+    text-decoration:
+        underline;
+}
+
+
+/* =========================
+   MANAGE REGISTRATION PAGE
+   ========================= */
+
+.manage-registration-page {
+    --christmas-green: #173d32;
+    --christmas-green-dark: #0f2c25;
+    --christmas-green-soft: #285447;
+
+    --christmas-red: #a63d46;
+    --christmas-red-dark: #87323a;
+
+    --christmas-gold: #c8a96b;
+
+    --holiday-cream: #f7f3ea;
+    --holiday-card: rgba(255, 255, 255, 0.96);
+
+    --holiday-text: #202521;
+    --holiday-muted: #6d746f;
+    --holiday-border: #dddcd4;
+
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--christmas-green-dark),
+            var(--christmas-green)
+        );
+
+    color: var(--holiday-text);
+}
+
+
+.manage-registration-shell {
+    position: relative;
+    z-index: 1;
+
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 48px 20px;
+}
+
+
+.manage-registration-card {
+    width: min(100%, 700px);
+
+    padding: 40px;
+
+    background: var(--holiday-card);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.45);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.24);
+
+    backdrop-filter: blur(14px);
+}
+
+
+.manage-registration-card h1 {
+    margin: 0 0 12px;
+
+    color: var(--christmas-green-dark);
+
+    font-size:
+        clamp(2rem, 6vw, 2.8rem);
+
+    line-height: 1.08;
+}
+
+
+#manage-status {
+    margin: 0 0 26px;
+
+    color: var(--holiday-muted);
+
+    line-height: 1.55;
+}
+
+
+#manage-registration-form {
+    display: grid;
+
+    gap: 22px;
+
+    margin-top: 30px;
+}
+
+
+.manage-registration-page input,
+.manage-registration-page textarea {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border:
+        1px solid var(--holiday-border);
+
+    border-radius: 11px;
+
+    background: white;
+
+    color: var(--holiday-text);
+
+    font: inherit;
+
+    outline: none;
+
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+
+.manage-registration-page textarea {
+    min-height: 110px;
+
+    resize: vertical;
+}
+
+
+.manage-registration-page input:focus,
+.manage-registration-page textarea:focus {
+    border-color:
+        var(--christmas-green-soft);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(40, 84, 71, 0.11);
+}
+
+
+.manage-registration-page textarea:disabled {
+    background: #f2f2ef;
+
+    color: #777;
+
+    cursor: not-allowed;
+}
+
+
+#save-registration-button {
+    margin: 0;
+
+    padding: 13px 18px;
+
+    background:
+        var(--christmas-green);
+
+    color: white;
+
+    border: 0;
+
+    border-radius: 11px;
+
+    font: inherit;
+    font-weight: 750;
+
+    cursor: pointer;
+}
+
+
+#save-registration-button:hover:not(:disabled) {
+    background:
+        var(--christmas-green-dark);
+}
+
+
+#save-registration-button:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+}
+
+
+.withdraw-section {
+    margin-top: 34px;
+
+    padding: 22px;
+
+    background: #fbf4f3;
+
+    border:
+        1px solid #ead6d3;
+
+    border-radius: 14px;
+}
+
+
+.withdraw-section h2 {
+    margin: 0 0 8px;
+
+    color:
+        var(--christmas-red-dark);
+
+    font-size: 1.15rem;
+}
+
+
+.withdraw-section p {
+    margin: 0 0 16px;
+
+    color:
+        var(--holiday-muted);
+
+    line-height: 1.55;
+}
+
+
+#withdraw-button {
+    margin: 0;
+
+    padding: 12px 16px;
+
+    background:
+        var(--christmas-red);
+
+    color: white;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    font: inherit;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+#withdraw-button:hover:not(:disabled) {
+    background:
+        var(--christmas-red-dark);
+}
+
+
+#withdraw-button:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+}
+
+
+#manage-message {
+    min-height: 22px;
+
+    margin: 18px 0 0;
+
+    color:
+        var(--christmas-green-dark);
+
+    font-size: 0.92rem;
+
+    font-weight: 700;
+
+    line-height: 1.5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media (max-width: 600px) {
 
     .join-shell {
-        align-items:
-            flex-start;
-
-        padding:
-            20px 12px;
+        align-items: flex-start;
+        padding: 14px 10px;
     }
 
     .join-card {
+        padding: 26px 20px;
+        border-radius: 18px;
+    }
+
+    .join-brand {
+        margin-bottom: 24px;
+    }
+
+    .exchange-details {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .join-page #participant-form {
+        gap: 16px;
+    }
+
+    .join-page textarea {
+        min-height: 90px;
+    }
+
+    .join-page input,
+    .join-page textarea {
+        padding: 12px 13px;
+    }
+
+    .join-page #resend-confirmation-button {
+        width: 100%;
+    }
+
+    .join-page #change-email-button {
+        width: 100%;
+        margin: 10px 0 0;
+    }
+
+    .pending-actions {
+    flex-direction: column;
+    }
+
+    .pending-actions button {
+        width: 100%;
+        margin: 0;
+    }
+
+    .verify-shell {
+        align-items: flex-start;
+
+        padding:
+            14px 10px;
+    }
+
+
+    .verify-card {
         padding:
             28px 22px;
 
@@ -564,21 +1162,42 @@ a:hover {
             18px;
     }
 
-    .join-brand {
-        margin-bottom:
-            28px;
+    .manage-registration-shell {
+        align-items: flex-start;
+
+        padding: 14px 10px;
     }
 
-    .join-page #change-email-button {
-        margin:
-            10px 0 0;
 
-        width:
-            100%;
+    .manage-registration-card {
+        padding: 26px 20px;
+
+        border-radius: 18px;
     }
 
-    .join-page #resend-confirmation-button {
-        width:
-            100%;
+
+    .manage-registration-page
+    .exchange-details {
+        grid-template-columns: 1fr;
+
+        gap: 8px;
+    }
+
+
+    .manage-registration-page
+    #manage-registration-form {
+        gap: 16px;
+    }
+
+
+    .manage-registration-page
+    textarea {
+        min-height: 90px;
+    }
+
+
+    #save-registration-button,
+    #withdraw-button {
+        width: 100%;
     }
 }

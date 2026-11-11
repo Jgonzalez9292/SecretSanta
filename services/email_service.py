@@ -83,7 +83,8 @@ async def send_registration_confirmation_email(
     budget,
     registration_deadline,
     draw_date,
-    verification_token: str
+    verification_token: str,
+    management_token: str
 ):
 
     recipient = (
@@ -121,6 +122,16 @@ async def send_registration_confirmation_email(
 
     safe_verification_url = escape(
         verification_url,
+        quote=True
+    )
+
+    management_url = (
+        f"{APP_BASE_URL}/manage-registration.html"
+        f"#token={quote(management_token)}"
+    )
+
+    safe_management_url = escape(
+        management_url,
         quote=True
     )
 
@@ -171,6 +182,28 @@ async def send_registration_confirmation_email(
             >
                 Confirm Registration
             </a>
+        </p>
+        
+        <p style="margin-top: 24px;">
+            Need to update your interests or wishlist,
+            or withdraw before registration closes?
+        </p>
+
+        <p>
+            <a
+                href="{safe_management_url}"
+                style="
+                    color: #174a34;
+                    font-weight: bold;
+                    text-decoration: none;
+                "
+            >
+                Manage Registration
+            </a>
+        </p>
+
+        <p>
+            You can make changes until registration closes.
         </p>
 
         <p>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Secret Santa Registration</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+</head>
+
+<body class="manage-registration-page">
+
+    <div class="join-background">
+        <div class="join-glow join-glow-one"></div>
+        <div class="join-glow join-glow-two"></div>
+    </div>
+
+    <main class="manage-registration-shell">
+
+        <section class="manage-registration-card">
+
+            <div class="join-brand">
+                <span class="join-brand-mark">
+                    🎁
+                </span>
+
+                <span>
+                    Secret Santa
+                </span>
+            </div>
+
+
+            <p class="join-eyebrow">
+                Manage Registration
+            </p>
+
+
+            <h1 id="manage-exchange-name">
+                Loading...
+            </h1>
+
+
+            <p id="manage-status"></p>
+
+
+            <div
+                id="manage-registration-content"
+                hidden
+            >
+
+                <div class="exchange-details">
+
+                    <div class="exchange-detail">
+
+                        <span class="exchange-detail-label">
+                            Participant
+                        </span>
+
+                        <strong id="manage-name"></strong>
+
+                    </div>
+
+
+                    <div class="exchange-detail">
+
+                        <span class="exchange-detail-label">
+                            Email
+                        </span>
+
+                        <strong id="manage-email"></strong>
+
+                    </div>
+
+
+                    <div class="exchange-detail">
+
+                        <span class="exchange-detail-label">
+                            Registration Closes
+                        </span>
+
+                        <strong id="manage-deadline"></strong>
+
+                    </div>
+
+                </div>
+
+
+                <form id="manage-registration-form">
+
+                    <div class="form-field">
+
+                        <label for="manage-interests">
+                            Interests
+                        </label>
+
+                        <p class="field-help">
+                            Add hobbies, favorite things,
+                            or anything that might help your Secret Santa.
+                        </p>
+
+                        <textarea
+                            id="manage-interests"
+                            placeholder="Gaming, cooking, music, coffee, sports..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-field">
+
+                        <label for="manage-wishlist">
+                            Wishlist
+                        </label>
+
+                        <p class="field-help">
+                            Add specific gift ideas you'd be happy to receive.
+                        </p>
+
+                        <textarea
+                            id="manage-wishlist"
+                            placeholder="Gift cards, gadgets, snacks, books..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        id="save-registration-button"
+                        type="submit"
+                    >
+                        Save Changes
+                    </button>
+
+                </form>
+
+
+                <section class="withdraw-section">
+
+                    <h2>
+                        Withdraw from Exchange
+                    </h2>
+
+                    <p>
+                        If you can no longer participate,
+                        you can withdraw until registration closes.
+                    </p>
+
+                    <button
+                        id="withdraw-button"
+                        type="button"
+                    >
+                        Withdraw from Secret Santa
+                    </button>
+
+                </section>
+
+            </div>
+
+
+            <p id="manage-message"></p>
+
+        </section>
+
+    </main>
+
+
+    <script src="js/config.js"></script>
+    <script src="js/manage-registration.js"></script>
+
+</body>
+</html>

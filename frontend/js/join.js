@@ -51,6 +51,21 @@ const cancelEmailChangeButton =
         "cancel-email-change-button"
     );
 
+const exchangeDeadline =
+    document.getElementById(
+        "exchange-deadline"
+    );
+
+const exchangeDrawDate =
+    document.getElementById(
+        "exchange-draw-date"
+    );
+
+const joinExchangeButton =
+    document.getElementById(
+        "join-exchange-button"
+    );
+
 
 let exchange = null;
 
@@ -111,15 +126,41 @@ async function loadExchange() {
         exchange =
             await response.json();
 
-
         exchangeName.textContent =
             exchange.name;
 
-
         exchangeBudget.textContent =
             exchange.budget !== null
-                ? `Budget: $${exchange.budget}`
-                : "No budget specified";
+                ? `$${Number(exchange.budget).toFixed(0)}`
+                : "Not specified";
+
+
+        exchangeDeadline.textContent =
+            exchange.registration_deadline
+                ? new Date(
+                    exchange.registration_deadline
+                ).toLocaleDateString(
+                    "en-US",
+                    {
+                        month: "short",
+                        day: "numeric"
+                    }
+                )
+                : "Not specified";
+
+
+        exchangeDrawDate.textContent =
+            exchange.draw_date
+                ? new Date(
+                    exchange.draw_date
+                ).toLocaleDateString(
+                    "en-US",
+                    {
+                        month: "short",
+                        day: "numeric"
+                    }
+                )
+                : "Not specified";
 
 
         if (exchange.registration_closed) {
@@ -190,63 +231,92 @@ form.addEventListener(
         };
 
 
-        const response = await fetch(
-            `${API_BASE_URL}/api/participants/join/${encodeURIComponent(exchange.code)}`,
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify(participant)
-            }
-        );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            message.textContent =
-                data.detail ||
-                "Could not join exchange.";
-
-            return;
-        }
-
-
-        sessionStorage.setItem(
-            "participant_id",
-            data.id
-        );
-
-        sessionStorage.setItem(
-            "management_token",
-            data.management_token
-        );
-
-        sessionStorage.setItem(
-            "pending_email",
-            data.email
-        );
-
-
-        form.hidden =
+        joinExchangeButton.disabled =
             true;
+
+        joinExchangeButton.textContent =
+            "Joining...";
 
         message.textContent =
             "";
 
-        pendingEmail.textContent =
-            data.email;
 
-        pendingRegistration.hidden =
-            false;
+        try {
+
+            const response = await fetch(
+                `${API_BASE_URL}/api/participants/join/${encodeURIComponent(exchange.code)}`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(participant)
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                message.textContent =
+                    data.detail ||
+                    "Could not join exchange.";
+
+                return;
+            }
+
+
+            sessionStorage.setItem(
+                "participant_id",
+                data.id
+            );
+
+            sessionStorage.setItem(
+                "management_token",
+                data.management_token
+            );
+
+            sessionStorage.setItem(
+                "pending_email",
+                data.email
+            );
+
+
+            form.hidden =
+                true;
+
+            message.textContent =
+                "";
+
+            pendingEmail.textContent =
+                data.email;
+
+            pendingRegistration.hidden =
+                false;
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            message.textContent =
+                "Could not connect to the server. Please try again.";
+
+        } finally {
+
+            joinExchangeButton.disabled =
+                false;
+
+            joinExchangeButton.textContent =
+                "Join Exchange";
+        }
     }
 );
 

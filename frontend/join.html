@@ -24,7 +24,6 @@
             <div class="join-intro">
                 <p class="join-eyebrow">You're invited</p>
 
-
                 <h1 id="exchange-name"></h1>
 
                 <p class="join-subtitle">
@@ -33,31 +32,112 @@
                 </p>
             </div>
 
-            <p id="exchange-budget"></p>
+            <div class="exchange-details">
 
-            <form id="participant-form">
+                <div class="exchange-detail">
+                    <span class="exchange-detail-label">
+                        Gift Limit
+                    </span>
 
-                <label for="name">Name</label>
-                <input
-                    type="text"
-                    id="name"
-                    required
-                >
+                    <strong id="exchange-budget"></strong>
+                </div>
 
-                <label for="email">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    required
-                >
+                <div class="exchange-detail">
+                    <span class="exchange-detail-label">
+                        Registration Closes
+                    </span>
 
-                <label for="interests">Interests</label>
-                <textarea id="interests"></textarea>
+                    <strong id="exchange-deadline"></strong>
+                </div>
 
-                <label for="wishlist">Wishlist</label>
-                <textarea id="wishlist"></textarea>
+                <div class="exchange-detail">
+                    <span class="exchange-detail-label">
+                        Drawing
+                    </span>
 
-                <button type="submit">
+                    <strong id="exchange-draw-date"></strong>
+                </div>
+
+            </div>
+
+            <form id="participant-form" hidden>
+
+                <div class="form-field">
+
+                    <label for="name">
+                        Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Your name"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-field">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <p class="field-help">
+                        We'll send your confirmation and Secret Santa assignment here.
+                        You must confirm your email to be included in the draw.
+                    </p>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="you@example.com"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-field">
+
+                    <label for="interests">
+                        Interests
+                        <span class="optional-label">Optional</span>
+                    </label>
+
+                    <p class="field-help">
+                        What are you into? This gives your Secret Santa some ideas.
+                    </p>
+
+                    <textarea
+                        id="interests"
+                        placeholder="Gaming, cooking, music, coffee, sports, books..."
+                    ></textarea>
+
+                </div>
+
+                <div class="form-field">
+
+                    <label for="wishlist">
+                        Wishlist
+                        <span class="optional-label">Optional</span>
+                    </label>
+
+                    <p class="field-help">
+                        Add anything specific you'd be happy to receive.
+                    </p>
+
+                    <textarea
+                        id="wishlist"
+                        placeholder="Gift cards, gadgets, favorite snacks, clothing sizes..."
+                    ></textarea>
+
+                </div>
+
+                <p class="join-note">
+                    After joining, check your email and confirm your registration.
+                </p>
+
+                <button id="join-exchange-button" type="submit">
                     Join Exchange
                 </button>
 
@@ -65,34 +145,45 @@
 
             <section id="pending-registration" hidden>
 
+                <div class="pending-icon">
+                    ✉️
+                </div>
+
+                <p class="join-eyebrow">
+                    One more step
+                </p>
+
                 <h2>Check your email</h2>
 
-                <p>
+                <p class="pending-copy">
                     We sent a confirmation link to:
                 </p>
 
-                <p>
+                <p class="pending-address">
                     <strong id="pending-email"></strong>
                 </p>
 
-                <p>
-                    You need to confirm your email before
-                    you're included in the Secret Santa draw.
+                <p class="pending-copy">
+                    You need to confirm your email before you're included in the Secret Santa draw.
                 </p>
 
-                <button
-                    id="resend-confirmation-button"
-                    type="button"
-                >
-                    Resend Confirmation
-                </button>
+                <div class="pending-actions">
 
-                <button
-                    id="change-email-button"
-                    type="button"
-                >
-                    Change Email
-                </button>
+                    <button
+                        id="resend-confirmation-button"
+                        type="button"
+                    >
+                        Resend Confirmation
+                    </button>
+
+                    <button
+                        id="change-email-button"
+                        type="button"
+                    >
+                        Change Email
+                    </button>
+
+                </div>
 
                 <form id="change-email-form" hidden>
 
@@ -118,7 +209,6 @@
                     </button>
 
                 </form>
-
             </section>
 
             <p id="message"></p>

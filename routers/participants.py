@@ -13,7 +13,8 @@ from schemas import (
     ParticipantJoinResponse,
     ParticipantManagementRequest,
     ParticipantEmailUpdate,
-    ParticipantVerificationRequest
+    ParticipantVerificationRequest,
+    ParticipantPreferencesUpdate
 )
 from auth import get_current_user
 from datetime import datetime, timezone, timedelta
@@ -152,7 +153,8 @@ async def join_exchange(
             budget=exchange.budget,
             registration_deadline=exchange.registration_deadline,
             draw_date=exchange.draw_date,
-            verification_token=verification_token
+            verification_token=verification_token,
+            management_token=management_token
         )
 
     except Exception as error:
@@ -212,7 +214,7 @@ def verify_registration(
 
     if (
         exchange.registration_deadline is not None
-        and now > exchange.registration_deadline
+        and now >= exchange.registration_deadline
     ):
         raise HTTPException(
             status_code=403,
@@ -292,7 +294,7 @@ async def resend_verification(
 
     if (
         exchange.registration_deadline is not None
-        and now > exchange.registration_deadline
+        and now >= exchange.registration_deadline
     ):
         raise HTTPException(
             status_code=403,
@@ -351,7 +353,8 @@ async def resend_verification(
             budget=exchange.budget,
             registration_deadline=exchange.registration_deadline,
             draw_date=exchange.draw_date,
-            verification_token=verification_token
+            verification_token=verification_token,
+            management_token=request.management_token
         )
 
     except Exception as error:
@@ -412,7 +415,7 @@ async def update_participant_email(
 
     if (
         exchange.registration_deadline is not None
-        and now > exchange.registration_deadline
+        and now >= exchange.registration_deadline
     ):
         raise HTTPException(
             status_code=403,
@@ -475,7 +478,8 @@ async def update_participant_email(
             budget=exchange.budget,
             registration_deadline=exchange.registration_deadline,
             draw_date=exchange.draw_date,
-            verification_token=verification_token
+            verification_token=verification_token,
+            management_token=request.management_token
         )
 
     except Exception as error:
@@ -493,6 +497,204 @@ async def update_participant_email(
         "status": "success",
         "email": participant.email,
         "message": "Email updated. A new confirmation email was sent."
+    }
+
+@router.post("/manage")
+def get_participant_registration(
+    request: ParticipantManagementRequest,
+    db: Session = Depends(get_db)
+):
+    token_hash = hash_token(
+        request.management_token
+    )
+
+    participant = (
+        db.query(Participant)
+        .filter(
+            Participant.management_token_hash == token_hash
+        )
+        .first()
+    )
+
+    if participant is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Registration not found."
+        )
+
+    exchange = participant.exchange
+
+    now = datetime.now(timezone.utc)
+
+    registration_closed = (
+        exchange.registration_deadline is not None
+        and now >= exchange.registration_deadline
+    )
+
+    exchange_has_been_drawn = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id
+        )
+        .first()
+        is not None
+    )
+
+    return {
+        "participant": {
+            "id": participant.id,
+            "name": participant.name,
+            "email": participant.email,
+            "interests": participant.interests,
+            "wishlist": participant.wishlist,
+            "email_verified_at": participant.email_verified_at
+        },
+
+        "exchange": {
+            "id": exchange.id,
+            "name": exchange.name,
+            "budget": exchange.budget,
+            "registration_deadline":
+                exchange.registration_deadline,
+            "draw_date":
+                exchange.draw_date
+        },
+
+        "registration_closed":
+            registration_closed
+            or exchange_has_been_drawn
+    }
+
+@router.put("/manage")
+def update_participant_preferences(
+    request: ParticipantPreferencesUpdate,
+    db: Session = Depends(get_db)
+):
+    token_hash = hash_token(
+        request.management_token
+    )
+
+    participant = (
+        db.query(Participant)
+        .filter(
+            Participant.management_token_hash == token_hash
+        )
+        .first()
+    )
+
+    if participant is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Registration not found."
+        )
+
+    exchange = participant.exchange
+
+    now = datetime.now(timezone.utc)
+
+    if (
+        exchange.registration_deadline is not None
+        and now >= exchange.registration_deadline
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Registration has closed. Your information can no longer be changed."
+        )
+
+    exchange_has_been_drawn = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id
+        )
+        .first()
+        is not None
+    )
+
+    if exchange_has_been_drawn:
+        raise HTTPException(
+            status_code=403,
+            detail="This exchange has already been drawn."
+        )
+
+    participant.interests = (
+        request.interests.strip()
+        if request.interests
+        else ""
+    )
+
+    participant.wishlist = (
+        request.wishlist.strip()
+        if request.wishlist
+        else ""
+    )
+
+    db.commit()
+    db.refresh(participant)
+
+    return {
+        "status": "success",
+        "message": "Your Secret Santa information has been updated.",
+        "interests": participant.interests,
+        "wishlist": participant.wishlist
+    }
+
+@router.post("/manage/withdraw")
+def withdraw_participant(
+    request: ParticipantManagementRequest,
+    db: Session = Depends(get_db)
+):
+    token_hash = hash_token(
+        request.management_token
+    )
+
+    participant = (
+        db.query(Participant)
+        .filter(
+            Participant.management_token_hash == token_hash
+        )
+        .first()
+    )
+
+    if participant is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Registration not found."
+        )
+
+    exchange = participant.exchange
+
+    now = datetime.now(timezone.utc)
+
+    if (
+        exchange.registration_deadline is not None
+        and now >= exchange.registration_deadline
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Registration has closed. You can no longer withdraw."
+        )
+
+    exchange_has_been_drawn = (
+        db.query(Assignment)
+        .filter(
+            Assignment.exchange_id == exchange.id
+        )
+        .first()
+        is not None
+    )
+
+    if exchange_has_been_drawn:
+        raise HTTPException(
+            status_code=403,
+            detail="This exchange has already been drawn."
+        )
+
+    db.delete(participant)
+    db.commit()
+
+    return {
+        "status": "success",
+        "message": "You have withdrawn from the Secret Santa exchange."
     }
 
 @router.delete("/{participant_id}")
