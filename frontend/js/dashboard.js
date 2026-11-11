@@ -18,18 +18,11 @@ if (!token) {
 
 async function loadDashboard() {
 
-    const userResponse = await fetch(
-        `${API_BASE_URL}/api/users/me`,
-        {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        }
+    const userResponse = await authenticatedFetch(
+        `${API_BASE_URL}/api/users/me`
     );
 
-    if (!userResponse.ok) {
-        localStorage.removeItem("access_token");
-        window.location.href = "login.html";
+    if (!userResponse) {
         return;
     }
 
@@ -39,14 +32,13 @@ async function loadDashboard() {
         `Welcome, ${user.name}`;
 
 
-    const exchangeResponse = await fetch(
-        `${API_BASE_URL}/api/exchanges/mine`,
-        {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        }
+    const exchangeResponse = await authenticatedFetch(
+        `${API_BASE_URL}/api/exchanges/mine`
     );
+
+    if (!exchangeResponse) {
+        return;
+    }
 
     if (!exchangeResponse.ok) {
         exchangeList.textContent =

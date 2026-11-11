@@ -1,5 +1,19 @@
 const form = document.getElementById("login-form");
 const message = document.getElementById("message");
+const loginMessage =
+    sessionStorage.getItem(
+        "login_message"
+    );
+
+if (loginMessage) {
+
+    message.textContent =
+        loginMessage;
+
+    sessionStorage.removeItem(
+        "login_message"
+    );
+}
 
 
 form.addEventListener("submit", async (event) => {
