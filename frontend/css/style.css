@@ -1371,6 +1371,23 @@ a {
     text-decoration: none;
 }
 
+.organizer-title-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.organizer-join-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.organizer-join-button:hover {
+    text-decoration: none;
+}
+
 /* =========================
    RESPONSIVE
    ========================= */
@@ -1558,6 +1575,15 @@ a {
 
     .dashboard-password-button,
     .dashboard-logout-button {
+        width: 100%;
+    }
+
+    .organizer-title-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .organizer-title-actions .secondary-button {
         width: 100%;
     }
 }

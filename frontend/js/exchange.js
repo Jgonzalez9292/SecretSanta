@@ -132,6 +132,14 @@ async function loadExchange() {
     document.getElementById("exchange-code").textContent =
         `Code: ${exchange.code}`;
 
+    const joinExchangeButton =
+        document.getElementById(
+            "join-exchange-button"
+        );
+
+    joinExchangeButton.href =
+        `join.html?code=${encodeURIComponent(exchange.code)}`;
+
     document.getElementById("exchange-budget").textContent =
         exchange.budget !== null
             ? `$${Number(exchange.budget).toFixed(0)}`
